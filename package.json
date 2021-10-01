@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/Graph1589/frontend-project-lvl3#readme",
   "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/node": "^7.8.7",
     "@babel/core": "^7.15.5",
     "@babel/eslint-parser": "^7.15.4",
     "@babel/preset-env": "^7.15.4",
