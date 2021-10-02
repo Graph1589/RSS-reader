@@ -1,16 +1,41 @@
 import i18next from 'i18next';
 import resources from './locales';
+import validate from './validator'
+import view from './view';
 
 export default () => {
   const state = {
-
+    form: {
+      valid: true,
+      error: undefined,
+    },
+    feeds: [],
+    posts: [],
   };
+
+  const watchedState = view(state);
 
   const form = document.querySelector('form');
   const urlField = document.getElementById('url-input');
 
+  const getFeedsList = () => state.feeds.map((feed) => feed.feedLink);
+
   const processingEnteredUrl = () => {
     console.log(urlField.value);
+    const url = urlField.value;
+    console.log(getFeedsList());
+    const list = getFeedsList();
+    validate(url, list).then(() => {
+      watchedState.form.valid = true;
+      watchedState.form.error = undefined;
+      //здесь видимо будет запрос
+      // или может в след then ? 
+      console.log('ALL CORRECT');
+    }).catch((error) => {
+      watchedState.form.valid = false;
+      watchedState.form.error = error.type;
+      console.log(error.type);
+    });
   };
 
   const i18nextInstance = i18next.createInstance();

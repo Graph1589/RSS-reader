@@ -1,3 +1,20 @@
+import onChange from 'on-change';
+import { renderInputValid } from './renderers';
+
+export default (state) => 
+  onChange(state, (path, value) => {
+    switch (path) {
+      case 'form.valid':
+        renderInputValid(value);
+        break;
+      case 'form.error':
+        
+        break;
+      default:
+        break;
+    }
+  });
+
 /*
 import onChange from 'on-change';
 

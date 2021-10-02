@@ -1,3 +1,20 @@
+import i18next from 'i18next';
+
+const urlInput = document.getElementById('url-input');
+
+const renderInputValid = (valid) => {
+  if (valid) {
+    urlInput.classList.remove('is-invalid');
+  } else {
+    urlInput.classList.add('is-invalid');
+  }
+}
+
+const renderInputNotValid = () => {
+  formInput.classList.add('is-invalid');
+}
+
+export { renderInputValid };
 /*
 import i18next from 'i18next';
 
