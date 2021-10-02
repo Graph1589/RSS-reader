@@ -1,4 +1,35 @@
+import i18next from 'i18next';
+import resources from './locales';
 
+export default () => {
+  const state = {
+
+  };
+
+  const form = document.querySelector('form');
+  const urlField = document.getElementById('url-input');
+
+  const processingEnteredUrl = () => {
+    console.log(urlField.value);
+  };
+
+  const i18nextInstance = i18next.createInstance();
+  i18nextInstance.init({
+    lng: 'ru',
+    debug: false,
+    resources,
+  }).then(() => {
+    console.log(i18nextInstance.t('messages.added'));
+    return 'QQQ';
+  }).then((i) => {
+    console.log(i);
+  }).then(() => {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      processingEnteredUrl();
+    });
+  });
+}
 
 /*
 import i18next from 'i18next';
