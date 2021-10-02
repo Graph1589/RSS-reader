@@ -1,3 +1,6 @@
+
+
+/*
 import i18next from 'i18next';
 import axios from 'axios';
 import _ from 'lodash';
@@ -154,3 +157,4 @@ export default () => {
     console.log(state.form.processState);
   }, 1000);
 };
+*/

@@ -1,3 +1,4 @@
+/*
 const parseXML = (feedString, feedLink) => {
   const parser = new DOMParser();
   const feedDocument = parser.parseFromString(feedString, 'text/xml');
@@ -17,3 +18,4 @@ const parseXML = (feedString, feedLink) => {
 };
 
 export default parseXML;
+*/

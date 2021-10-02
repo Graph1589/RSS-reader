@@ -1,3 +1,4 @@
+/*
 import i18next from 'i18next';
 
 const renderLayout = (state) => {
@@ -125,3 +126,4 @@ const renderSuccessMessage = (messageName) => {
 export {
   renderLayout, renderInputError, renderFeedError, renderSuccessMessage,
 };
+*/
