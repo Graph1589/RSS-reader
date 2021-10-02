@@ -1,6 +1,6 @@
-import i18next from 'i18next';
 
 const urlInput = document.getElementById('url-input');
+const feedback = document.querySelector('.feedback');
 
 const renderInputValid = (valid) => {
   if (valid) {
@@ -10,11 +10,18 @@ const renderInputValid = (valid) => {
   }
 }
 
+const renderError = (errorType, i18nextInstance) => {
+  feedback.classList.remove('text-success');
+  feedback.classList.add('text-danger');
+  feedback.innerText = i18nextInstance.t(`errors.${errorType}`);
+  console.log(feedback);
+}
+
 const renderInputNotValid = () => {
   formInput.classList.add('is-invalid');
 }
 
-export { renderInputValid };
+export { renderInputValid, renderError };
 /*
 import i18next from 'i18next';
 

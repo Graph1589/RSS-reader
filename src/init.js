@@ -1,5 +1,5 @@
-import i18next from 'i18next';
 import resources from './locales';
+import i18next from 'i18next';
 import validate from './validator'
 import view from './view';
 
@@ -12,9 +12,7 @@ export default () => {
     feeds: [],
     posts: [],
   };
-
-  const watchedState = view(state);
-
+  
   const form = document.querySelector('form');
   const urlField = document.getElementById('url-input');
 
@@ -44,7 +42,7 @@ export default () => {
     debug: false,
     resources,
   }).then(() => {
-    console.log(i18nextInstance.t('messages.added'));
+    console.log(i18nextInstance.t('errors.url'));
     return 'QQQ';
   }).then((i) => {
     console.log(i);
@@ -54,7 +52,9 @@ export default () => {
       processingEnteredUrl();
     });
   });
+  const watchedState = view(state, i18nextInstance);
 }
+
 
 /*
 import i18next from 'i18next';

@@ -1,14 +1,15 @@
 import onChange from 'on-change';
-import { renderInputValid } from './renderers';
+import { renderInputValid, renderError } from './renderers';
+import i18next from 'i18next';
 
-export default (state) => 
+export default (state, i18nextInstance) => 
   onChange(state, (path, value) => {
     switch (path) {
       case 'form.valid':
         renderInputValid(value);
         break;
       case 'form.error':
-        
+        renderError(value, i18nextInstance);
         break;
       default:
         break;
