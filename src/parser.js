@@ -1,10 +1,10 @@
-/*
-const parseXML = (feedString, feedLink) => {
+
+export default (feedString) => {
   const parser = new DOMParser();
-  const feedDocument = parser.parseFromString(feedString, 'text/xml');
-  const streamTitle = feedDocument.querySelector('title').textContent;
-  const streamDescription = feedDocument.querySelector('description').textContent;
-  const posts = [...feedDocument.querySelectorAll('item')].map((item) => {
+  const xmlDocument = parser.parseFromString(feedString, 'text/xml');
+  const feedTitle = xmlDocument.querySelector('title').textContent;
+  const feedDescription = xmlDocument.querySelector('description').textContent;
+  const posts = [...xmlDocument.querySelectorAll('item')].map((item) => {
     const postTitle = item.querySelector('title').textContent;
     const postLink = item.querySelector('link').textContent;
     const postDescription = item.querySelector('description').textContent;
@@ -13,9 +13,6 @@ const parseXML = (feedString, feedLink) => {
     };
   });
   return {
-    streamTitle, streamDescription, posts, feedLink,
+    feedTitle, feedDescription, posts,
   };
 };
-
-export default parseXML;
-*/

@@ -2,6 +2,9 @@ import resources from './locales';
 import i18next from 'i18next';
 import validate from './validator'
 import view from './view';
+import axios from 'axios';
+import parseXML from './parser.js'
+import _ from 'lodash';
 
 export default () => {
   const state = {
@@ -18,24 +21,62 @@ export default () => {
 
   const getFeedsList = () => state.feeds.map((feed) => feed.feedLink);
 
-  const processingEnteredUrl = () => {
-    console.log(urlField.value);
-    const url = urlField.value;
-    console.log(getFeedsList());
-    const list = getFeedsList();
-    validate(url, list).then(() => {
-      watchedState.form.valid = true;
-      watchedState.form.error = undefined;
-      //здесь видимо будет запрос
-      // или может в след then ? 
-      console.log('ALL CORRECT');
-    }).catch((error) => {
-      watchedState.form.valid = false;
-      watchedState.form.error = error.type;
-      console.log(error.type);
-    });
+  const proxy = new URL('https://hexlet-allorigins.herokuapp.com/raw?disableCache=true&url=');
+
+  const composeRequestUrl = (enteredUrl) => new URL(`${proxy.href}${enteredUrl}`);
+
+  const addRSS = ({
+    feedTitle, feedDescription, posts,
+  }, url) => {
+    const feedLink = url;
+    console.log('indide addRSS function')
+    const id = _.uniqueId();
+    watchedState.feeds = [{
+      feedTitle, feedDescription, feedLink, id, viewed: 'false',
+    }, ...state.feeds];
+    const processedPosts = posts.map((post) => ({ ...post, id }));
+    watchedState.posts = processedPosts.concat(state.posts);
   };
 
+  const processingEnteredUrl = () => {
+    watchedState.form.valid = true;
+    watchedState.form.error = undefined;
+    const url = urlField.value;
+    const list = getFeedsList();
+    validate(url, list).then(() => {
+      // throw new Error();
+    }).then(() => axios.get(composeRequestUrl(url)))
+      .then((response) => parseXML(response.data)
+      ).then((parsedRSS) => {
+        console.log(parsedRSS);
+        addRSS(parsedRSS, url);
+        console.log('after adding');
+      }).then(() => {})
+      /*.catch(() => {
+        console.log('network catch');
+        throw new Error('network');
+      })*/.then(() => {
+        console.log(watchedState);
+        console.log(state);
+        console.log('sss');
+      }).catch((error) => {
+        console.log('general catch')
+        console.log(error);
+        console.log(JSON.stringify(error));
+        switch (error) {
+          case 'url':
+            console.log('catch url case');
+            watchedState.form.valid = false;
+            watchedState.form.error = error.type;
+            break;
+          case 'network':
+            console.log('catch network case');
+            watchedState.error = error.type;
+        }
+      })
+  };
+
+  
   const i18nextInstance = i18next.createInstance();
   i18nextInstance.init({
     lng: 'ru',
@@ -52,7 +93,28 @@ export default () => {
       processingEnteredUrl();
     });
   });
+  
   const watchedState = view(state, i18nextInstance);
+
+  const addNewPosts = (newPosts, id) => {
+    const processedNewPosts = newPosts.map((post) => ({ ...post, id }));
+    watchedState.posts = processedNewPosts.concat(state.posts);
+  };
+  
+  const updateRSS = () => {
+    state.feeds.forEach((feed) => {
+      axios.get(composeRequestUrl(feed.feedLink))
+        .then((response) => {
+          const { posts } = parseXML(response.data);
+          const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
+          addNewPosts(newPosts, feed.id);
+        })
+    });
+  
+    setTimeout(() => updateRSS(), 5000);
+  };
+
+  setTimeout(updateRSS(), 5000);
 }
 
 

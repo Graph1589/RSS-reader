@@ -1,5 +1,5 @@
 import onChange from 'on-change';
-import { renderInputValid, renderError } from './renderers';
+import { renderInputValid, renderError, renderOutput } from './renderers';
 import i18next from 'i18next';
 
 export default (state, i18nextInstance) => 
@@ -10,6 +10,9 @@ export default (state, i18nextInstance) =>
         break;
       case 'form.error':
         renderError(value, i18nextInstance);
+        break;
+      case 'feeds' || 'posts':
+        renderOutput(state, i18nextInstance);
         break;
       default:
         break;
