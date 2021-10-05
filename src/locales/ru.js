@@ -13,7 +13,7 @@ export default {
     output: {
       feeds: 'Фиды',
       posts: 'Посты',
-      prewiew: 'Просмотр',
+      preview: 'Просмотр',
       full: 'Читать полностью',
       close: 'Закрыть',
     }

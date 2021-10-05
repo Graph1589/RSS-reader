@@ -41,7 +41,7 @@ export default () => {
   const processingEnteredUrl = () => {
     watchedState.form.valid = true;
     watchedState.form.error = undefined;
-    const url = urlField.value;
+    const url = urlField.value.trim();
     const list = getFeedsList();
     validate(url, list).then(() => {
       // throw new Error();
@@ -63,7 +63,7 @@ export default () => {
         console.log('general catch')
         console.log(error);
         console.log(JSON.stringify(error));
-        switch (error) {
+        switch (error.type) {
           case 'url':
             console.log('catch url case');
             watchedState.form.valid = false;

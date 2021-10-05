@@ -1,3 +1,4 @@
+import { Modal } from 'bootstrap';
 
 const urlInput = document.getElementById('url-input');
 const feedback = document.querySelector('.feedback');
@@ -25,8 +26,19 @@ const renderOutput = (state, i18nextInstance) => {
   const feedsContainer = document.querySelector('.feeds');
   const postsContainer = document.querySelector('.posts');
 
+  const modal = new Modal(document.getElementById('modal'));
+  const modalTitle = document.querySelector('.modal-title');
+  const modalContent = document.querySelector('.modal-body');
+  const modalRedirectButton = document.querySelector('.full-article');
+
+  const modalCloseButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
+  modalCloseButtons.forEach((closeButton) => closeButton.addEventListener('click', () => {
+    modal.hide();
+  }));
+
   // здесь вероятно клинер
   feedsContainer.innerHTML = '';
+  postsContainer.innerHTML = '';
   // попробовать feedsContainer.innerHTML = '';
 
   console.log(feedsContainer);
@@ -67,8 +79,75 @@ const renderOutput = (state, i18nextInstance) => {
     listOfFeeds.appendChild(currentFeedItem);
   });
   
-}
 
+  const postsOutward = document.createElement('div');
+  postsOutward.classList.add('card', 'border-0');
+  postsContainer.appendChild(postsOutward);
+  
+  const postsHeaderContainer = document.createElement('div');
+  postsHeaderContainer.classList.add('card-body');
+  postsOutward.appendChild(postsHeaderContainer);
+
+  const postsHeader = document.createElement('h4');
+  postsHeader.classList.add('card-title');
+  postsHeader.textContent = i18nextInstance.t('output.posts');
+  postsHeaderContainer.appendChild(postsHeader);
+
+  const listOfPosts = document.createElement('ul');
+  listOfPosts.classList.add('list-group', 'border-0', 'rounded-0');
+  postsOutward.appendChild(listOfPosts);
+
+  console.log('state before render posts');
+  console.log(state);
+
+  state.posts.forEach((currentPost) => {
+    console.log(currentPost);
+
+    const currentPostItem = document.createElement('li');
+    currentPostItem.classList.add('list-group-item', 'd-flex',
+    'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+
+    const currentPostHref = document.createElement('a');
+    currentPostHref.setAttribute('href', currentPost.postLink);
+    currentPostHref.setAttribute('target', '_blank');
+    currentPostHref.setAttribute('rel', 'noopener norefferer');
+    currentPostHref.setAttribute('style', 'text-decoration: none');
+    currentPostHref.classList.add('fw-normal', 'link-secondery');
+    currentPostHref.textContent = currentPost.postTitle;
+    console.log(currentPost.postTitle);
+    if (!currentPost.viewed) {
+      currentPostHref.classList.add('fw-bold');
+    }
+    currentPostItem.appendChild(currentPostHref);
+    currentPostHref.addEventListener('click', () => {
+      currentPost.viewed = true;
+      currentPostHref.classList.replace('fw-bold', 'fw-normal');
+    });
+
+    const previewButton = document.createElement('button');
+    previewButton.textContent = i18nextInstance.t('output.preview');
+    previewButton.classList.add('btn-outline-primary', 'btn', 'btn-sm');
+    previewButton.setAttribute('data-toggle', 'modal');
+    previewButton.setAttribute('data-target', '#modal');
+
+    previewButton.addEventListener('click', () => {
+      modalTitle.textContent = currentPost.postTitle;
+      modalContent.textContent = currentPost.postDescription;
+      const post = currentPost;
+      currentPost.viewed = true;
+      currentPostHref.classList.replace('fw-bold', 'fw-normal');
+      modalRedirectButton.href = currentPost.postLink;
+
+      modal.show();
+    });
+    currentPostItem.appendChild(previewButton);
+
+    listOfPosts.appendChild(currentPostItem);
+  });
+};
+
+export { renderInputValid, renderError, renderOutput };
+/*
 const renderNews = (state) => {
 
   const newsFeed = document.querySelector('[id="newsFeed"]');
@@ -141,27 +220,33 @@ const renderNews = (state) => {
   postsContainerInward.appendChild(postsList);
 
   state.posts.forEach((currentPost) => {
+
+
     const currentPostItem = document.createElement('li');
-    currentPostItem.classList.add('list-group-item');
+    currentPostItem.classList.add('list-group-item', 'd-flex',
+    'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
     const currentPostHref = document.createElement('a');
     currentPostHref.setAttribute('href', currentPost.postLink);
     currentPostHref.setAttribute('target', '_blank');
+    currentPostHref.setAttribute('rel', 'noopener noreffere')
+    currentPostHref.classList.add('fw-normal', 'link-secondery');
     currentPostHref.textContent = currentPost.postTitle;
     if (!currentPost.viewed) {
-      currentPostHref.classList.add('font-weight-bold');
+      currentPostHref.classList.add('fw-bold');
     }
     currentPostItem.appendChild(currentPostHref);
     currentPostHref.addEventListener('click', () => {
       const post = currentPost;
       post.viewed = true;
-      currentPostHref.classList.replace('font-weight-bold', 'font-weight-normal');
+      currentPostHref.classList.replace('fw-bold', 'fw-normal');
     });
+
     const previewButton = document.createElement('button');
-    previewButton.textContent = 'Preview';
+    previewButton.textContent = i18nextIns;
     previewButton.classList.add('btn-primary', 'btn', 'btn-sm', 'float-right');
     previewButton.setAttribute('data-toggle', 'modal');
-    previewButton.setAttribute('data-target', '#exampleModal');
+    previewButton.setAttribute('data-target', '#modal');
 
     previewButton.addEventListener('click', () => {
       modalTitle.textContent = currentPost.postTitle;

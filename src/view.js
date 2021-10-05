@@ -11,9 +11,11 @@ export default (state, i18nextInstance) =>
       case 'form.error':
         renderError(value, i18nextInstance);
         break;
-      case 'feeds' || 'posts':
+      case 'feeds':
         renderOutput(state, i18nextInstance);
         break;
+      case 'posts':
+        renderOutput(state, i18nextInstance);
       default:
         break;
     }
