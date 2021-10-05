@@ -11,11 +11,14 @@ export default () => {
     form: {
       valid: true,
       error: undefined,
+      message: undefined,
+      btnDisabled: false,
     },
     feeds: [],
     posts: [],
   };
-  
+  const updateInterval = 5000;
+
   const form = document.querySelector('form');
   const urlField = document.getElementById('url-input');
 
@@ -41,7 +44,9 @@ export default () => {
   const processingEnteredUrl = () => {
     watchedState.form.valid = true;
     watchedState.form.error = undefined;
-    const url = urlField.value.trim();
+    watchedState.form.message = undefined;
+    watchedState.form.btnDisabled = true;
+    const url = urlField.value;
     const list = getFeedsList();
     validate(url, list).then(() => {
       // throw new Error();
@@ -56,23 +61,33 @@ export default () => {
         console.log('network catch');
         throw new Error('network');
       })*/.then(() => {
-        console.log(watchedState);
-        console.log(state);
         console.log('sss');
+        watchedState.form.message = 'added';
       }).catch((error) => {
         console.log('general catch')
-        console.log(error);
+        //console.log(error.response.data);
+        console.log(error.type);
+        console.log(error.message);
         console.log(JSON.stringify(error));
-        switch (error.type) {
-          case 'url':
-            console.log('catch url case');
+        switch (error.name) {
+          case 'ValidationError':
+            console.log('catch validation case case');
             watchedState.form.valid = false;
             watchedState.form.error = error.type;
             break;
-          case 'network':
-            console.log('catch network case');
-            watchedState.error = error.type;
+          case 'Network Error':
+            console.log('catch in network case');
+            watchedState.form.error = 'network';
+          default:
+            break;
         }
+
+        if (error.message === 'Network Error') {
+          console.log('catch in network case');
+          watchedState.form.error = 'network';
+        }
+      }).then(() => {
+        watchedState.form.btnDisabled = false;
       })
   };
 
@@ -111,10 +126,10 @@ export default () => {
         })
     });
   
-    setTimeout(() => updateRSS(), 5000);
+    setTimeout(() => updateRSS(), updateInterval);
   };
 
-  setTimeout(updateRSS(), 5000);
+  setTimeout(updateRSS(), updateInterval);
 }
 
 

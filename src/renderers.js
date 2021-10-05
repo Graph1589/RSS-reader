@@ -2,6 +2,13 @@ import { Modal } from 'bootstrap';
 
 const urlInput = document.getElementById('url-input');
 const feedback = document.querySelector('.feedback');
+const submitButton = document.querySelector('[type="submit"]');
+
+const renderButton = (value) => {
+  submitButton.disabled = value;
+  urlInput.readOnly = value;
+
+}
 
 const renderInputValid = (valid) => {
   if (valid) {
@@ -12,10 +19,24 @@ const renderInputValid = (valid) => {
 }
 
 const renderError = (errorType, i18nextInstance) => {
-  feedback.classList.remove('text-success');
-  feedback.classList.add('text-danger');
-  feedback.innerText = i18nextInstance.t(`errors.${errorType}`);
+  if (errorType) {
+    feedback.classList.remove('text-success');
+    feedback.classList.add('text-danger');
+    feedback.textContent = i18nextInstance.t(`errors.${errorType}`);
+  } else {
+    feedback.textContent = '';
+  }
   console.log(feedback);
+}
+
+const renderSuccess = (message, i18nextInstance) => {
+  if (message) {
+    feedback.classList.remove('text-danger')
+    feedback.classList.add('text-success');
+    feedback.textContent = i18nextInstance.t(`messages.${message}`);
+    urlInput.value = '';
+    urlInput.focus();
+  }
 }
 
 const renderInputNotValid = () => {
@@ -40,9 +61,6 @@ const renderOutput = (state, i18nextInstance) => {
   feedsContainer.innerHTML = '';
   postsContainer.innerHTML = '';
   // попробовать feedsContainer.innerHTML = '';
-
-  console.log(feedsContainer);
-  console.log(postsContainer);
 
   const feedsOutward = document.createElement('div');
   feedsOutward.classList.add('card', 'border-0');
@@ -97,11 +115,7 @@ const renderOutput = (state, i18nextInstance) => {
   listOfPosts.classList.add('list-group', 'border-0', 'rounded-0');
   postsOutward.appendChild(listOfPosts);
 
-  console.log('state before render posts');
-  console.log(state);
-
   state.posts.forEach((currentPost) => {
-    console.log(currentPost);
 
     const currentPostItem = document.createElement('li');
     currentPostItem.classList.add('list-group-item', 'd-flex',
@@ -114,12 +128,12 @@ const renderOutput = (state, i18nextInstance) => {
     currentPostHref.setAttribute('style', 'text-decoration: none');
     currentPostHref.classList.add('fw-normal', 'link-secondery');
     currentPostHref.textContent = currentPost.postTitle;
-    console.log(currentPost.postTitle);
     if (!currentPost.viewed) {
       currentPostHref.classList.add('fw-bold');
     }
     currentPostItem.appendChild(currentPostHref);
     currentPostHref.addEventListener('click', () => {
+      //вью не может влиять на модель напрямую
       currentPost.viewed = true;
       currentPostHref.classList.replace('fw-bold', 'fw-normal');
     });
@@ -132,8 +146,9 @@ const renderOutput = (state, i18nextInstance) => {
 
     previewButton.addEventListener('click', () => {
       modalTitle.textContent = currentPost.postTitle;
-      modalContent.textContent = currentPost.postDescription;
+      modalContent.innerHTML = currentPost.postDescription;
       const post = currentPost;
+      //вью не может влиять на модель напрямую
       currentPost.viewed = true;
       currentPostHref.classList.replace('fw-bold', 'fw-normal');
       modalRedirectButton.href = currentPost.postLink;
@@ -146,7 +161,7 @@ const renderOutput = (state, i18nextInstance) => {
   });
 };
 
-export { renderInputValid, renderError, renderOutput };
+export { renderInputValid, renderError, renderSuccess, renderOutput, renderButton };
 /*
 const renderNews = (state) => {
 

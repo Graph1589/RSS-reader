@@ -1,5 +1,5 @@
 import onChange from 'on-change';
-import { renderInputValid, renderError, renderOutput } from './renderers';
+import { renderInputValid, renderError, renderSuccess, renderOutput, renderButton } from './renderers';
 import i18next from 'i18next';
 
 export default (state, i18nextInstance) => 
@@ -9,8 +9,16 @@ export default (state, i18nextInstance) =>
         renderInputValid(value);
         break;
       case 'form.error':
+        console.log(`form-error ${value}`);
+        
         renderError(value, i18nextInstance);
         break;
+      case 'form.btnDisabled':
+        renderButton(value);
+        break;
+      case 'form.message':
+        console.log('message changed');
+        renderSuccess(value, i18nextInstance);
       case 'feeds':
         renderOutput(state, i18nextInstance);
         break;
