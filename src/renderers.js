@@ -20,8 +20,7 @@ const renderInputValid = (valid) => {
 
 const renderError = (errorType, i18nextInstance) => {
   if (errorType) {
-    feedback.classList.remove('text-success');
-    feedback.classList.add('text-danger');
+    feedback.classList.replace('text-success','text-danger');
     feedback.textContent = i18nextInstance.t(`errors.${errorType}`);
   } else {
     feedback.textContent = '';
@@ -31,8 +30,7 @@ const renderError = (errorType, i18nextInstance) => {
 
 const renderSuccess = (message, i18nextInstance) => {
   if (message) {
-    feedback.classList.remove('text-danger')
-    feedback.classList.add('text-success');
+    feedback.classList.replace('text-danger','text-success');
     feedback.textContent = i18nextInstance.t(`messages.${message}`);
     urlInput.value = '';
     urlInput.focus();
@@ -126,6 +124,7 @@ const renderOutput = (state, i18nextInstance) => {
     currentPostHref.setAttribute('target', '_blank');
     currentPostHref.setAttribute('rel', 'noopener norefferer');
     currentPostHref.setAttribute('style', 'text-decoration: none');
+    //currentPostHref.setAttribute('data-id', `${currentPost.id}`);
     currentPostHref.classList.add('fw-normal', 'link-secondery');
     currentPostHref.textContent = currentPost.postTitle;
     if (!currentPost.viewed) {
@@ -143,6 +142,7 @@ const renderOutput = (state, i18nextInstance) => {
     previewButton.classList.add('btn-outline-primary', 'btn', 'btn-sm');
     previewButton.setAttribute('data-toggle', 'modal');
     previewButton.setAttribute('data-target', '#modal');
+    //previewButton.setAttribute('data-id', `${currentPost.id}`);
 
     previewButton.addEventListener('click', () => {
       modalTitle.textContent = currentPost.postTitle;

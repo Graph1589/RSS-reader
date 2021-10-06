@@ -1,7 +1,12 @@
 
 export default (feedString) => {
+  console.log(feedString.contents);
   const parser = new DOMParser();
   const xmlDocument = parser.parseFromString(feedString, 'text/xml');
+  const errorNode = xmlDocument.querySelector('parsererror');
+  if (errorNode) {
+    throw 'parsingError';
+  }
   const feedTitle = xmlDocument.querySelector('title').textContent;
   const feedDescription = xmlDocument.querySelector('description').textContent;
   const posts = [...xmlDocument.querySelectorAll('item')].map((item) => {

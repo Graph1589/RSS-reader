@@ -1,5 +1,5 @@
 import onChange from 'on-change';
-import { renderInputValid, renderError, renderSuccess, renderOutput, renderButton } from './renderers';
+import { renderInputValid, renderError, renderSuccess, renderOutput, renderButton } from './renderers.js';
 import i18next from 'i18next';
 
 export default (state, i18nextInstance) => 
@@ -10,7 +10,7 @@ export default (state, i18nextInstance) =>
         break;
       case 'form.error':
         console.log(`form-error ${value}`);
-        
+
         renderError(value, i18nextInstance);
         break;
       case 'form.btnDisabled':

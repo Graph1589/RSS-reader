@@ -1,9 +1,9 @@
-import resources from './locales';
-import i18next from 'i18next';
-import validate from './validator'
-import view from './view';
-import axios from 'axios';
+import resources from './locales/index.js';
+import validate from './validator.js'
 import parseXML from './parser.js'
+import view from './view.js';
+import i18next from 'i18next';
+import axios from 'axios';
 import _ from 'lodash';
 
 export default () => {
@@ -24,7 +24,7 @@ export default () => {
 
   const getFeedsList = () => state.feeds.map((feed) => feed.feedLink);
 
-  const proxy = new URL('https://hexlet-allorigins.herokuapp.com/raw?disableCache=true&url=');
+  const proxy = new URL('https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=');
 
   const composeRequestUrl = (enteredUrl) => new URL(`${proxy.href}${enteredUrl}`);
 
@@ -34,14 +34,14 @@ export default () => {
     const feedLink = url;
     console.log('indide addRSS function')
     const id = _.uniqueId();
-    watchedState.feeds = [{
+    watchedState.feeds.push({
       feedTitle, feedDescription, feedLink, id, viewed: 'false',
-    }, ...state.feeds];
+    });
     const processedPosts = posts.map((post) => ({ ...post, id }));
     watchedState.posts = processedPosts.concat(state.posts);
   };
 
-  const processingEnteredUrl = () => {
+  const processEnteredUrl = () => {
     watchedState.form.valid = true;
     watchedState.form.error = undefined;
     watchedState.form.message = undefined;
@@ -51,7 +51,7 @@ export default () => {
     validate(url, list).then(() => {
       // throw new Error();
     }).then(() => axios.get(composeRequestUrl(url)))
-      .then((response) => parseXML(response.data)
+      .then((response) => parseXML(response.data.contents)
       ).then((parsedRSS) => {
         console.log(parsedRSS);
         addRSS(parsedRSS, url);
@@ -65,11 +65,23 @@ export default () => {
         watchedState.form.message = 'added';
       }).catch((error) => {
         console.log('general catch')
+        //console.log(error.request.status);
+        //console.log(error.response);
         //console.log(error.response.data);
-        console.log(error.type);
-        console.log(error.message);
-        console.log(JSON.stringify(error));
-        switch (error.name) {
+        //console.log(error.type);
+        //console.log(error.message);
+        //console.log(error.toJSON());
+        if (error.request) {
+          console.log('!error.response');
+          watchedState.form.error = 'network';
+        } else if (error === 'parsingError') {
+          console.log('PARSING ERROR');
+          watchedState.form.error = 'wrongData';
+        } else {
+          watchedState.form.valid = false;
+          watchedState.form.error = error.type;
+        }
+        /*switch (error.name) {
           case 'ValidationError':
             console.log('catch validation case case');
             watchedState.form.valid = false;
@@ -85,7 +97,7 @@ export default () => {
         if (error.message === 'Network Error') {
           console.log('catch in network case');
           watchedState.form.error = 'network';
-        }
+        }*/
       }).then(() => {
         watchedState.form.btnDisabled = false;
       })
@@ -105,7 +117,7 @@ export default () => {
   }).then(() => {
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-      processingEnteredUrl();
+      processEnteredUrl();
     });
   });
   
@@ -120,9 +132,10 @@ export default () => {
     state.feeds.forEach((feed) => {
       axios.get(composeRequestUrl(feed.feedLink))
         .then((response) => {
-          const { posts } = parseXML(response.data);
+          const { posts } = parseXML(response.data.contents);
           const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
           addNewPosts(newPosts, feed.id);
+          console.log('UPDATED');
         })
     });
   
