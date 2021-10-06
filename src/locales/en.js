@@ -20,6 +20,6 @@ export default {
       prewiew: 'Preview',
       full: 'Open',
       close: 'Close',
-    }
+    },
   },
 };

@@ -1,10 +1,10 @@
-import resources from './locales/index.js';
-import validate from './validator.js'
-import parseXML from './parser.js'
-import view from './view.js';
 import i18next from 'i18next';
 import axios from 'axios';
 import _ from 'lodash';
+import resources from './locales/index.js';
+import validate from './validator.js';
+import parseXML from './parser.js';
+import view from './view.js';
 
 export default () => {
   const state = {
@@ -17,6 +17,9 @@ export default () => {
     feeds: [],
     posts: [],
   };
+
+  const i18nextInstance = i18next.createInstance();
+  const watchedState = view(state, i18nextInstance);
   const updateInterval = 5000;
 
   const form = document.querySelector('form');
@@ -32,7 +35,6 @@ export default () => {
     feedTitle, feedDescription, posts,
   }, url) => {
     const feedLink = url;
-    console.log('indide addRSS function')
     const id = _.uniqueId();
     watchedState.feeds.push({
       feedTitle, feedDescription, feedLink, id, viewed: 'false',
@@ -48,259 +50,57 @@ export default () => {
     watchedState.form.btnDisabled = true;
     const url = urlField.value;
     const list = getFeedsList();
-    validate(url, list).then(() => {
-      // throw new Error();
-    }).then(() => axios.get(composeRequestUrl(url)))
-      .then((response) => parseXML(response.data.contents)
-      ).then((parsedRSS) => {
-        console.log(parsedRSS);
+    validate(url, list)
+      .then(() => axios.get(composeRequestUrl(url)))
+      .then((response) => parseXML(response.data))
+      .then((parsedRSS) => {
         addRSS(parsedRSS, url);
-        console.log('after adding');
-      }).then(() => {})
-      /*.catch(() => {
-        console.log('network catch');
-        throw new Error('network');
-      })*/.then(() => {
-        console.log('sss');
+      })
+      .then(() => {
         watchedState.form.message = 'added';
-      }).catch((error) => {
-        console.log('general catch')
-        //console.log(error.request.status);
-        //console.log(error.response);
-        //console.log(error.response.data);
-        //console.log(error.type);
-        //console.log(error.message);
-        //console.log(error.toJSON());
+      })
+      .catch((error) => {
         if (error.request) {
-          console.log('!error.response');
           watchedState.form.error = 'network';
-        } else if (error === 'parsingError') {
-          console.log('PARSING ERROR');
+        } else if (error.message === 'parsingError') {
           watchedState.form.error = 'wrongData';
         } else {
           watchedState.form.valid = false;
           watchedState.form.error = error.type;
         }
-        /*switch (error.name) {
-          case 'ValidationError':
-            console.log('catch validation case case');
-            watchedState.form.valid = false;
-            watchedState.form.error = error.type;
-            break;
-          case 'Network Error':
-            console.log('catch in network case');
-            watchedState.form.error = 'network';
-          default:
-            break;
-        }
-
-        if (error.message === 'Network Error') {
-          console.log('catch in network case');
-          watchedState.form.error = 'network';
-        }*/
-      }).then(() => {
-        watchedState.form.btnDisabled = false;
       })
+      .then(() => {
+        watchedState.form.btnDisabled = false;
+      });
   };
 
-  
-  const i18nextInstance = i18next.createInstance();
   i18nextInstance.init({
     lng: 'ru',
     debug: false,
     resources,
-  }).then(() => {
-    console.log(i18nextInstance.t('errors.url'));
-    return 'QQQ';
-  }).then((i) => {
-    console.log(i);
   }).then(() => {
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       processEnteredUrl();
     });
   });
-  
-  const watchedState = view(state, i18nextInstance);
 
   const addNewPosts = (newPosts, id) => {
     const processedNewPosts = newPosts.map((post) => ({ ...post, id }));
     watchedState.posts = processedNewPosts.concat(state.posts);
   };
-  
+
   const updateRSS = () => {
     state.feeds.forEach((feed) => {
       axios.get(composeRequestUrl(feed.feedLink))
         .then((response) => {
-          const { posts } = parseXML(response.data.contents);
+          const { posts } = parseXML(response.data);
           const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
           addNewPosts(newPosts, feed.id);
-          console.log('UPDATED');
-        })
+        });
     });
-  
     setTimeout(() => updateRSS(), updateInterval);
   };
 
   setTimeout(updateRSS(), updateInterval);
-}
-
-
-/*
-import i18next from 'i18next';
-import axios from 'axios';
-import _ from 'lodash';
-import resources from './locales';
-import {
-  renderLayout, renderInputError, renderFeedError, renderSuccessMessage,
-} from './renderers';
-import validate from './validator';
-import parseXML from './parser';
-import view from './view';
-
-export default () => {
-  const state = {
-    form: {
-      processState: 'filling',
-      injectedUrl: '',
-      valid: true,
-      inputError: '',
-      feedError: '',
-    },
-    layout: {
-      feeds: [],
-      posts: [],
-    },
-  };
-
-  i18next.init({
-    lng: 'en',
-    debug: false,
-    resources,
-  }).then(() => {
-    // renderLayout(state, t);
-  });
-
-  const proxy = 'https://hexlet-allorigins.herokuapp.com/raw?disableCache=true&url=';
-
-  const form = document.querySelector('[class="rss-form"]');
-  const submitButton = document.querySelector('[id="submit-button"]');
-  const urlField = document.querySelector('[id="url-field"]');
-
-  const feedbackSuccess = document.querySelector('[class="feedback text-success"]');
-
-  const processStateHandler = (processState) => {
-    switch (processState) {
-      case 'failed':
-        submitButton.disabled = true;
-        break;
-      case 'filling':
-        submitButton.disabled = false;
-        urlField.disabled = false;
-        renderSuccessMessage('');
-        renderFeedError('');
-        break;
-      case 'networkError':
-        console.log('NETWORK ERROR MESSAGE FROM HANDLER');
-        renderFeedError('network');
-        submitButton.disabled = false;
-        urlField.disabled = false;
-        break;
-      case 'sending':
-        renderFeedError('');
-        form.disabled = true;
-        submitButton.disabled = true;
-        urlField.disabled = true;
-        break;
-      case 'finished':
-        urlField.value = '';
-        urlField.disabled = false;
-        renderSuccessMessage('added');
-        renderFeedError('');
-        break;
-      default:
-        throw new Error(`Unknown state: ${processState}`);
-    }
-  };
-
-  const watchedState = view(
-    state, processStateHandler, renderInputError, renderFeedError, renderLayout,
-  );
-
-  const getFeedsList = () => state.layout.feeds.map((feed) => feed.feedLink);
-
-  const updateValidationState = () => {
-    const error = validate(watchedState.form.injectedUrl, getFeedsList());
-    watchedState.form.valid = (error === '');
-    watchedState.form.inputError = error;
-    return error;
-  };
-
-  urlField.addEventListener('input', (e) => {
-    e.preventDefault();
-    feedbackSuccess.textContent = '';
-    watchedState.form.processState = 'filling';
-    watchedState.form.injectedUrl = e.target.value;
-    updateValidationState();
-  });
-
-  const addNewPosts = (newPosts, id) => {
-    const processedNewPosts = newPosts.map((post) => ({ ...post, id }));
-    watchedState.layout.posts = processedNewPosts.concat(state.layout.posts);
-  };
-
-  const addRSS = ({
-    streamTitle, streamDescription, posts, feedLink,
-  }) => {
-    const id = _.uniqueId();
-    watchedState.layout.feeds = [{
-      streamTitle, streamDescription, feedLink, id, viewed: 'false',
-    }, ...state.layout.feeds];
-    const processedPosts = posts.map((post) => ({ ...post, id }));
-    watchedState.layout.posts = processedPosts.concat(state.layout.posts);
-  };
-
-  const getRSS = (url) => {
-    axios.get(`${proxy}${url}`)
-      .then((response) => {
-        const parsedRSS = parseXML(response.data, url);
-        addRSS(parsedRSS);
-        watchedState.form.processState = 'finished';
-      })
-      .catch(() => {
-        watchedState.form.feedError = 'network';
-        watchedState.form.feedError = '';
-      });
-  };
-
-  const updateRSS = () => {
-    watchedState.layout.feeds.forEach((feed) => {
-      axios.get(`${proxy}${feed.feedLink}`)
-        .then((response) => {
-          const { posts } = parseXML(response.data, feed.feedLink);
-          const newPosts = _.differenceBy(posts, watchedState.layout.posts, 'postTitle');
-          addNewPosts(newPosts, feed.id);
-        })
-        .catch((e) => {
-          throw new Error(e);
-        });
-    });
-
-    setTimeout(() => updateRSS(), 5000);
-  };
-
-  setTimeout(updateRSS(), 5000);
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (updateValidationState() === '') {
-      watchedState.form.processState = 'sending';
-      getRSS(urlField.value);
-    }
-  });
-
-  setInterval(() => {
-    console.log(state.form.processState);
-  }, 1000);
 };
-*/
