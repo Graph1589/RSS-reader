@@ -22,7 +22,7 @@ export default () => {
   const watchedState = view(state, i18nextInstance);
   const updateInterval = 5000;
   const postsContainer = document.querySelector('.posts');
-  // const form = document.getElementById('rss-form');
+  const form = document.getElementById('rss-form');
   // const form = document.querySelector('.rss-form');
   const urlField = document.getElementById('url-input');
 
@@ -79,8 +79,6 @@ export default () => {
     debug: false,
     resources,
   }).then(() => {
-    return document.querySelector('#rss-form');
-  }).then((form) => {
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       processEnteredUrl();
