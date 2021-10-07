@@ -23,7 +23,7 @@ export default () => {
   const updateInterval = 5000;
   const postsContainer = document.querySelector('.posts');
 
-  const form = document.querySelector('.rss-form');
+  // const form = document.querySelector('.rss-form');
   const urlField = document.getElementById('url-input');
 
   const getFeedsList = () => state.feeds.map((feed) => feed.feedLink);
@@ -78,19 +78,22 @@ export default () => {
     lng: 'ru',
     debug: false,
     resources,
-  });
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    processEnteredUrl();
-  });
-  postsContainer.addEventListener('click', (event) => {
-    console.log(postsContainer);
-    const id = event.target.getAttribute('data-id');
-    if (id) {
+  }).then(() => {
+    const form = document.querySelector('.rss-form');
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      processEnteredUrl();
+    });
+  }).then(() => {
+    postsContainer.addEventListener('click', (event) => {
       console.log(postsContainer);
-      const clickedPost = _.find(watchedState.posts, (post) => post.id === id);
-      clickedPost.viewed = 'true';
-    }
+      const id = event.target.getAttribute('data-id');
+      if (id) {
+        console.log(postsContainer);
+        const clickedPost = _.find(watchedState.posts, (post) => post.id === id);
+        clickedPost.viewed = 'true';
+      }
+    });
   });
 
   const updateRSS = () => {
