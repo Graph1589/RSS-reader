@@ -78,22 +78,20 @@ export default () => {
     lng: 'ru',
     debug: false,
     resources,
-  }).then(() => {
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      processEnteredUrl();
-    });
-  }).then(() => {
-    postsContainer.addEventListener('click', (event) => {
+  });
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    processEnteredUrl();
+  });
+  postsContainer.addEventListener('click', (event) => {
+    console.log(postsContainer);
+    const id = event.target.getAttribute('data-id');
+    if (id) {
       console.log(postsContainer);
-      const id = event.target.getAttribute('data-id');
-      if (id) {
-        console.log(postsContainer);
-        const clickedPost = _.find(watchedState.posts, (post) => post.id === id);
-        clickedPost.viewed = 'true';
-      }
-    });
-  })
+      const clickedPost = _.find(watchedState.posts, (post) => post.id === id);
+      clickedPost.viewed = 'true';
+    }
+  });
 
   const updateRSS = () => {
     state.feeds.forEach((feed) => {
