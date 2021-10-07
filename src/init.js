@@ -1,6 +1,7 @@
 import i18next from 'i18next';
 import axios from 'axios';
 import _ from 'lodash';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import resources from './locales/index.js';
 import validate from './validator.js';
 import parseXML from './parser.js';
@@ -23,7 +24,6 @@ export default () => {
   const updateInterval = 5000;
   const postsContainer = document.querySelector('.posts');
   const form = document.getElementById('rss-form');
-  // const form = document.querySelector('.rss-form');
   const urlField = document.getElementById('url-input');
 
   const getFeedsList = () => state.feeds.map((feed) => feed.feedLink);
@@ -44,9 +44,9 @@ export default () => {
   };
 
   const processEnteredUrl = () => {
+    watchedState.form.message = undefined;
     watchedState.form.valid = true;
     watchedState.form.error = undefined;
-    watchedState.form.message = undefined;
     watchedState.form.btnDisabled = true;
     const url = urlField.value;
     const list = getFeedsList();
@@ -85,10 +85,8 @@ export default () => {
     });
   }).then(() => {
     postsContainer.addEventListener('click', (event) => {
-      console.log(postsContainer);
       const id = event.target.getAttribute('data-id');
       if (id) {
-        console.log(postsContainer);
         const clickedPost = _.find(watchedState.posts, (post) => post.id === id);
         clickedPost.viewed = 'true';
       }
@@ -107,6 +105,5 @@ export default () => {
     });
     setTimeout(() => updateRSS(), updateInterval);
   };
-  console.log(postsContainer);
   setTimeout(updateRSS(), updateInterval);
 };
