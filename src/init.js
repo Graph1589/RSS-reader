@@ -45,9 +45,9 @@ export default () => {
   };
 
   const processEnteredUrl = () => {
+    watchedState.form.message = undefined;
     watchedState.form.valid = true;
     watchedState.form.error = undefined;
-    watchedState.form.message = undefined;
     watchedState.form.btnDisabled = true;
     const url = urlField.value;
     const list = getFeedsList();
