@@ -14,5 +14,12 @@ export default {
     messages: {
       added: 'Feed added successfully.',
     },
+    output: {
+      feeds: 'Feeds',
+      posts: 'Posts',
+      prewiew: 'Preview',
+      full: 'Open',
+      close: 'Close',
+    },
   },
 };

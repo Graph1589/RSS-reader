@@ -1,127 +1,167 @@
-import i18next from 'i18next';
+import { Modal } from 'bootstrap';
 
-const renderLayout = (state) => {
-  const layout = document.querySelector('[id="layout"]');
-  const modalTitle = document.querySelector('[class="modal-title"]');
-  const modalContent = document.querySelector('[class="modal-body"]');
-  const modalRedirectButton = document.querySelector('[id="redirectButton"]');
+// const urlInput = document.getElementById('url-input');
+// const feedback = document.querySelector('.feedback');
+// const submitButton = document.querySelector('[type="submit"]');
 
-  const layoutCleaner = (node) => {
-    if (node.hasChildNodes()) {
-      node.childNodes.forEach((child) => {
-        layoutCleaner(child);
-      });
-    }
-    node.remove();
-  };
-  layout.childNodes.forEach((childNode) => {
-    layoutCleaner(childNode);
-  });
+const renderButton = (value) => {
+  const urlInput = document.getElementById('url-input');
+  const submitButton = document.querySelector('[type="submit"]');
+  submitButton.disabled = value;
+  urlInput.readOnly = value;
+};
 
-  const { childNodes } = layout;
-  [...childNodes].forEach((childNode) => {
-    layoutCleaner(childNode);
-  });
+const renderInputValid = (valid) => {
+  const urlInput = document.getElementById('url-input');
+  if (valid) {
+    urlInput.classList.remove('is-invalid');
+  } else {
+    urlInput.classList.add('is-invalid');
+  }
+};
 
-  const feedsContainerCoat = document.createElement('div');
-  feedsContainerCoat.classList.add('row');
-  layout.appendChild(feedsContainerCoat);
+const renderError = (errorType, i18nextInstance) => {
+  const feedback = document.querySelector('.feedback');
+  if (errorType) {
+    feedback.classList.replace('text-success', 'text-danger');
+    feedback.textContent = i18nextInstance.t(`errors.${errorType}`);
+  } else {
+    feedback.textContent = '';
+  }
+};
 
-  const feedsContainerInward = document.createElement('div');
-  feedsContainerInward.classList.add('container-fluid', 'col-lg-10', 'mx-auto', 'feeds');
-  feedsContainerCoat.appendChild(feedsContainerInward);
+const renderSuccess = (message, i18nextInstance) => {
+  const urlInput = document.getElementById('url-input');
+  const feedback = document.querySelector('.feedback');
+  if (message) {
+    feedback.classList.replace('text-danger', 'text-success');
+    feedback.textContent = i18nextInstance.t(`messages.${message}`);
+    urlInput.value = '';
+    urlInput.focus();
+  }
+};
 
-  const feedsHeader = document.createElement('h2');
-  feedsHeader.textContent = 'Feeds';
-  feedsContainerInward.appendChild(feedsHeader);
+const renderOutput = (state, i18nextInstance) => {
+  const feedsContainer = document.querySelector('.feeds');
+  const postsContainer = document.querySelector('.posts');
 
-  const feedsList = document.createElement('ul');
-  feedsList.classList.add('list-group', 'mb-5');
-  feedsContainerInward.appendChild(feedsList);
+  const modal = new Modal(document.getElementById('modal'));
+  const modalTitle = document.querySelector('.modal-title');
+  const modalContent = document.querySelector('.modal-body');
+  const modalRedirectButton = document.querySelector('.full-article');
 
-  state.layout.feeds.forEach((currentFeed) => {
+  const modalCloseButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
+  modalCloseButtons.forEach((closeButton) => closeButton.addEventListener('click', () => {
+    modal.hide();
+  }));
+
+  feedsContainer.innerHTML = '';
+  postsContainer.innerHTML = '';
+
+  const feedsOutward = document.createElement('div');
+  feedsOutward.classList.add('card', 'border-0');
+  feedsContainer.appendChild(feedsOutward);
+
+  const feedsHeaderContainer = document.createElement('div');
+  feedsHeaderContainer.classList.add('card-body');
+  feedsOutward.appendChild(feedsHeaderContainer);
+
+  const feedsHeader = document.createElement('h4');
+  feedsHeader.classList.add('card-title');
+  feedsHeader.textContent = i18nextInstance.t('output.feeds');
+  feedsHeaderContainer.appendChild(feedsHeader);
+
+  const listOfFeeds = document.createElement('ul');
+  listOfFeeds.classList.add('list-group', 'border-0', 'rounded-0');
+  feedsOutward.appendChild(listOfFeeds);
+
+  state.feeds.forEach((currentFeed) => {
+    const { feedTitle, feedDescription } = currentFeed;
     const currentFeedItem = document.createElement('li');
-    currentFeedItem.classList.add('list-group-item');
+    currentFeedItem.classList.add('list-group-item', 'border-0', 'border-end-0');
 
-    const currentFeedHeader = document.createElement('h3');
-    currentFeedHeader.textContent = currentFeed.streamTitle;
+    const currentFeedHeader = document.createElement('h6');
+    currentFeedHeader.classList.add('m-0');
+    currentFeedHeader.textContent = feedTitle;
     currentFeedItem.appendChild(currentFeedHeader);
 
     const currentFeedDescription = document.createElement('p');
-    currentFeedDescription.textContent = currentFeed.streamDescription;
+    currentFeedDescription.classList.add('m-0', 'text-black-50', 'small');
+    currentFeedDescription.textContent = feedDescription;
     currentFeedItem.appendChild(currentFeedDescription);
 
-    feedsList.appendChild(currentFeedItem);
+    listOfFeeds.appendChild(currentFeedItem);
   });
 
-  const postsContainerCoat = document.createElement('div');
-  postsContainerCoat.classList.add('row');
-  layout.appendChild(postsContainerCoat);
+  const postsOutward = document.createElement('div');
+  postsOutward.classList.add('card', 'border-0');
+  postsContainer.appendChild(postsOutward);
 
-  const postsContainerInward = document.createElement('div');
-  postsContainerInward.classList.add('container-fluid', 'col-lg-10', 'mx-auto', 'posts');
-  postsContainerCoat.appendChild(postsContainerInward);
+  const postsHeaderContainer = document.createElement('div');
+  postsHeaderContainer.classList.add('card-body');
+  postsOutward.appendChild(postsHeaderContainer);
 
-  const postsHeader = document.createElement('h2');
-  postsHeader.textContent = 'Posts';
-  postsContainerInward.appendChild(postsHeader);
+  const postsHeader = document.createElement('h4');
+  postsHeader.classList.add('card-title');
+  postsHeader.textContent = i18nextInstance.t('output.posts');
+  postsHeaderContainer.appendChild(postsHeader);
 
-  const postsList = document.createElement('ul');
-  postsList.classList.add('list-group');
-  postsContainerInward.appendChild(postsList);
+  const listOfPosts = document.createElement('ul');
+  listOfPosts.classList.add('list-group', 'border-0', 'rounded-0');
+  postsOutward.appendChild(listOfPosts);
 
-  state.layout.posts.forEach((currentPost) => {
+  state.posts.forEach((currentPost) => {
     const currentPostItem = document.createElement('li');
-    currentPostItem.classList.add('list-group-item');
+    currentPostItem.classList.add(
+      'list-group-item',
+      'd-flex',
+      'justify-content-between',
+      'align-items-start',
+      'border-0',
+      'border-end-0',
+    );
 
     const currentPostHref = document.createElement('a');
     currentPostHref.setAttribute('href', currentPost.postLink);
     currentPostHref.setAttribute('target', '_blank');
+    currentPostHref.setAttribute('rel', 'noopener norefferer');
+    currentPostHref.setAttribute('style', 'text-decoration: none');
+    currentPostHref.setAttribute('data-id', `${currentPost.id}`);
+    currentPostHref.classList.add('fw-normal', 'link-secondery');
     currentPostHref.textContent = currentPost.postTitle;
     if (!currentPost.viewed) {
-      currentPostHref.classList.add('font-weight-bold');
+      currentPostHref.classList.add('fw-bold');
     }
     currentPostItem.appendChild(currentPostHref);
     currentPostHref.addEventListener('click', () => {
-      const post = currentPost;
-      post.viewed = true;
-      currentPostHref.classList.replace('font-weight-bold', 'font-weight-normal');
+      currentPostHref.classList.replace('fw-bold', 'fw-normal');
     });
+
     const previewButton = document.createElement('button');
-    previewButton.textContent = 'Preview';
-    previewButton.classList.add('btn-primary', 'btn', 'btn-sm', 'float-right');
+    previewButton.textContent = i18nextInstance.t('output.preview');
+    previewButton.classList.add('btn-outline-primary', 'btn', 'btn-sm');
     previewButton.setAttribute('data-toggle', 'modal');
-    previewButton.setAttribute('data-target', '#exampleModal');
+    previewButton.setAttribute('data-target', '#modal');
+    previewButton.setAttribute('data-id', `${currentPost.id}`);
 
     previewButton.addEventListener('click', () => {
       modalTitle.textContent = currentPost.postTitle;
-      modalContent.textContent = currentPost.postDescription;
-      const post = currentPost;
-      post.viewed = true;
-      currentPostHref.classList.replace('font-weight-bold', 'font-weight-normal');
+      modalContent.innerHTML = currentPost.postDescription;
+      currentPostHref.classList.replace('fw-bold', 'fw-normal');
       modalRedirectButton.href = currentPost.postLink;
+
+      modal.show();
     });
     currentPostItem.appendChild(previewButton);
 
-    postsList.appendChild(currentPostItem);
+    listOfPosts.appendChild(currentPostItem);
   });
 };
 
-const feedbackDanger = document.querySelector('[class="feedback text-danger"]');
-const successMessage = document.querySelector('[class="feedback text-success"]');
-
-const renderInputError = (errorName) => {
-  feedbackDanger.textContent = !(errorName === '') ? i18next.t(`errors.input.${errorName}`) : '';
-};
-
-const renderFeedError = (errorName) => {
-  feedbackDanger.textContent = !(errorName === '') ? i18next.t(`errors.feed.${errorName}`) : '';
-};
-
-const renderSuccessMessage = (messageName) => {
-  successMessage.textContent = !(messageName === '') ? i18next.t(`messages.${messageName}`) : '';
-};
-
 export {
-  renderLayout, renderInputError, renderFeedError, renderSuccessMessage,
+  renderInputValid,
+  renderError,
+  renderSuccess,
+  renderOutput,
+  renderButton,
 };
