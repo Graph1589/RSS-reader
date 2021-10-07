@@ -23,7 +23,7 @@ export default () => {
   const updateInterval = 5000;
   const postsContainer = document.querySelector('.posts');
 
-  const form = document.querySelector('form');
+  const form = document.querySelector('.rss-form');
   const urlField = document.getElementById('url-input');
 
   const getFeedsList = () => state.feeds.map((feed) => feed.feedLink);
