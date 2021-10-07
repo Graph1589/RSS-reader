@@ -1,7 +1,6 @@
 import i18next from 'i18next';
 import axios from 'axios';
 import _ from 'lodash';
-import 'bootstrap';
 import resources from './locales/index.js';
 import validate from './validator.js';
 import parseXML from './parser.js';
