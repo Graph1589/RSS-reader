@@ -21,6 +21,7 @@ export default () => {
   const i18nextInstance = i18next.createInstance();
   const watchedState = view(state, i18nextInstance);
   const updateInterval = 5000;
+  const postsContainer = document.querySelector('.posts');
 
   const form = document.querySelector('form');
   const urlField = document.getElementById('url-input');
@@ -35,11 +36,10 @@ export default () => {
     feedTitle, feedDescription, posts,
   }, url) => {
     const feedLink = url;
-    const id = _.uniqueId();
     watchedState.feeds.push({
-      feedTitle, feedDescription, feedLink, id, viewed: 'false',
+      feedTitle, feedDescription, feedLink, id: _.uniqueId(), viewed: 'false',
     });
-    const processedPosts = posts.map((post) => ({ ...post, id }));
+    const processedPosts = posts.map((post) => ({ ...post, id: _.uniqueId() }));
     watchedState.posts = processedPosts.concat(state.posts);
   };
 
@@ -85,10 +85,15 @@ export default () => {
     });
   });
 
-  const addNewPosts = (newPosts, id) => {
-    const processedNewPosts = newPosts.map((post) => ({ ...post, id }));
-    watchedState.posts = processedNewPosts.concat(state.posts);
-  };
+  postsContainer.addEventListener('click', (event) => {
+    const id = event.target.getAttribute('data-id');
+    if (id) {
+      console.log(id);
+      const clickedPost = _.find(watchedState.posts, (post) => post.id === id);
+      clickedPost.viewed = 'true';
+    }
+    console.log(event.target);
+  });
 
   const updateRSS = () => {
     state.feeds.forEach((feed) => {
@@ -96,7 +101,8 @@ export default () => {
         .then((response) => {
           const { posts } = parseXML(response.data);
           const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
-          addNewPosts(newPosts, feed.id);
+          const processedNewPosts = newPosts.map((post) => ({ ...post, id: _.uniqueId() }));
+          watchedState.posts = processedNewPosts.concat(state.posts);
         });
     });
     setTimeout(() => updateRSS(), updateInterval);

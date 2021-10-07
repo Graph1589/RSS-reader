@@ -121,7 +121,7 @@ const renderOutput = (state, i18nextInstance) => {
     currentPostHref.setAttribute('target', '_blank');
     currentPostHref.setAttribute('rel', 'noopener norefferer');
     currentPostHref.setAttribute('style', 'text-decoration: none');
-    // currentPostHref.setAttribute('data-id', `${currentPost.id}`);
+    currentPostHref.setAttribute('data-id', `${currentPost.id}`);
     currentPostHref.classList.add('fw-normal', 'link-secondery');
     currentPostHref.textContent = currentPost.postTitle;
     if (!currentPost.viewed) {
@@ -129,8 +129,6 @@ const renderOutput = (state, i18nextInstance) => {
     }
     currentPostItem.appendChild(currentPostHref);
     currentPostHref.addEventListener('click', () => {
-      // вью не может влиять на модель напрямую
-      currentPost.viewed = true;
       currentPostHref.classList.replace('fw-bold', 'fw-normal');
     });
 
@@ -139,13 +137,11 @@ const renderOutput = (state, i18nextInstance) => {
     previewButton.classList.add('btn-outline-primary', 'btn', 'btn-sm');
     previewButton.setAttribute('data-toggle', 'modal');
     previewButton.setAttribute('data-target', '#modal');
-    // previewButton.setAttribute('data-id', `${currentPost.id}`);
+    previewButton.setAttribute('data-id', `${currentPost.id}`);
 
     previewButton.addEventListener('click', () => {
       modalTitle.textContent = currentPost.postTitle;
       modalContent.innerHTML = currentPost.postDescription;
-      // вью не может влиять на модель напрямую
-      currentPost.viewed = true;
       currentPostHref.classList.replace('fw-bold', 'fw-normal');
       modalRedirectButton.href = currentPost.postLink;
 
