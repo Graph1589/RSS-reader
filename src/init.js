@@ -83,17 +83,17 @@ export default () => {
       event.preventDefault();
       processEnteredUrl();
     });
-  });
-
-  postsContainer.addEventListener('click', (event) => {
-    const id = event.target.getAttribute('data-id');
-    if (id) {
-      console.log(id);
-      const clickedPost = _.find(watchedState.posts, (post) => post.id === id);
-      clickedPost.viewed = 'true';
-    }
-    console.log(event.target);
-  });
+  }).then(() => {
+    postsContainer.addEventListener('click', (event) => {
+      console.log(postsContainer);
+      const id = event.target.getAttribute('data-id');
+      if (id) {
+        console.log(postsContainer);
+        const clickedPost = _.find(watchedState.posts, (post) => post.id === id);
+        clickedPost.viewed = 'true';
+      }
+    });
+  })
 
   const updateRSS = () => {
     state.feeds.forEach((feed) => {
@@ -107,6 +107,6 @@ export default () => {
     });
     setTimeout(() => updateRSS(), updateInterval);
   };
-
+  console.log(postsContainer);
   setTimeout(updateRSS(), updateInterval);
 };
