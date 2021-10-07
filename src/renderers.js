@@ -1,15 +1,18 @@
 import { Modal } from 'bootstrap';
 
-const urlInput = document.getElementById('url-input');
-const feedback = document.querySelector('.feedback');
-const submitButton = document.querySelector('[type="submit"]');
+// const urlInput = document.getElementById('url-input');
+// const feedback = document.querySelector('.feedback');
+// const submitButton = document.querySelector('[type="submit"]');
 
 const renderButton = (value) => {
+  const urlInput = document.getElementById('url-input');
+  const submitButton = document.querySelector('[type="submit"]');
   submitButton.disabled = value;
   urlInput.readOnly = value;
 };
 
 const renderInputValid = (valid) => {
+  const urlInput = document.getElementById('url-input');
   if (valid) {
     urlInput.classList.remove('is-invalid');
   } else {
@@ -18,16 +21,18 @@ const renderInputValid = (valid) => {
 };
 
 const renderError = (errorType, i18nextInstance) => {
+  const feedback = document.querySelector('.feedback');
   if (errorType) {
     feedback.classList.replace('text-success', 'text-danger');
     feedback.textContent = i18nextInstance.t(`errors.${errorType}`);
   } else {
     feedback.textContent = '';
   }
-  console.log(feedback);
 };
 
 const renderSuccess = (message, i18nextInstance) => {
+  const urlInput = document.getElementById('url-input');
+  const feedback = document.querySelector('.feedback');
   if (message) {
     feedback.classList.replace('text-danger', 'text-success');
     feedback.textContent = i18nextInstance.t(`messages.${message}`);
