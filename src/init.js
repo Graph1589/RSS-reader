@@ -8,95 +8,95 @@ import parseXML from './parser.js';
 import view from './view.js';
 
 export default () => {
-  const state = {
-    form: {
-      valid: true,
-      error: undefined,
-      message: undefined,
-      btnDisabled: false,
-    },
-    feeds: [],
-    posts: [],
-  };
-
   const i18nextInstance = i18next.createInstance();
-  const watchedState = view(state, i18nextInstance);
-  const updateInterval = 5000;
-  const postsContainer = document.querySelector('.posts');
-  const form = document.getElementById('rss-form');
-  const urlField = document.getElementById('url-input');
-
-  const getFeedsList = () => state.feeds.map((feed) => feed.feedLink);
-
-  const proxy = new URL('https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=');
-
-  const composeRequestUrl = (enteredUrl) => new URL(`${proxy.href}${enteredUrl}`);
-
-  const addRSS = ({
-    feedTitle, feedDescription, posts,
-  }, url) => {
-    const feedLink = url;
-    watchedState.feeds.push({
-      feedTitle, feedDescription, feedLink, id: _.uniqueId(), viewed: 'false',
-    });
-    const processedPosts = posts.map((post) => ({ ...post, id: _.uniqueId() }));
-    watchedState.posts = processedPosts.concat(state.posts);
-  };
-
-  const processEnteredUrl = () => {
-    watchedState.form.message = undefined;
-    watchedState.form.valid = true;
-    watchedState.form.error = undefined;
-    watchedState.form.btnDisabled = true;
-    const url = urlField.value;
-    const list = getFeedsList();
-    validate(url, list)
-      .then(() => axios.get(composeRequestUrl(url)))
-      .then((response) => parseXML(response.data))
-      .then((parsedRSS) => {
-        addRSS(parsedRSS, url);
-      })
-      .then(() => {
-        watchedState.form.message = 'added';
-      })
-      .catch((error) => {
-        if (error.request) {
-          watchedState.form.error = 'network';
-        } else if (error.message === 'parsingError') {
-          watchedState.form.error = 'wrongData';
-        } else {
-          watchedState.form.valid = false;
-          watchedState.form.error = error.type;
-        }
-      })
-      .then(() => {
-        watchedState.form.btnDisabled = false;
-      });
-  };
-
-  const updateRSS = () => {
-    state.feeds.forEach((feed) => {
-      axios.get(composeRequestUrl(feed.feedLink))
-        .then((response) => {
-          const { posts } = parseXML(response.data);
-          const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
-          const processedNewPosts = newPosts.map((post) => ({ ...post, id: _.uniqueId() }));
-          watchedState.posts = processedNewPosts.concat(state.posts);
-        });
-    });
-    setTimeout(() => updateRSS(), updateInterval);
-  };
-
-  i18nextInstance.init({
+  return i18nextInstance.init({
     lng: 'ru',
     debug: false,
     resources,
   }).then(() => {
+    const state = {
+      form: {
+        valid: true,
+        error: undefined,
+        message: undefined,
+        btnDisabled: false,
+      },
+      feeds: [],
+      posts: [],
+    };
+
+    const watchedState = view(state, i18nextInstance);
+    const updateInterval = 5000;
+    const postsContainer = document.querySelector('.posts');
+    const form = document.getElementById('rss-form');
+    const urlField = document.getElementById('url-input');
+
+    const getFeedsList = () => state.feeds.map((feed) => feed.feedLink);
+
+    const proxy = new URL('https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=');
+
+    const composeRequestUrl = (enteredUrl) => new URL(`${proxy.href}${enteredUrl}`);
+
+    const addRSS = ({
+      feedTitle, feedDescription, posts,
+    }, url) => {
+      const feedLink = url;
+      watchedState.feeds.push({
+        feedTitle, feedDescription, feedLink, id: _.uniqueId(), viewed: 'false',
+      });
+      const processedPosts = posts.map((post) => ({ ...post, id: _.uniqueId() }));
+      watchedState.posts = processedPosts.concat(state.posts);
+    };
+
+    const processEnteredUrl = () => {
+      watchedState.form.message = undefined;
+      watchedState.form.valid = true;
+      watchedState.form.error = undefined;
+      watchedState.form.btnDisabled = true;
+      const enteredUrl = urlField.value;
+      const list = getFeedsList();
+      validate(enteredUrl, list)
+        .then(() => axios.get(composeRequestUrl(enteredUrl)))
+        .then((response) => parseXML(response.data))
+        .then((parsedRSS) => {
+          addRSS(parsedRSS, enteredUrl);
+        })
+        .then(() => {
+          watchedState.form.message = 'added';
+        })
+        .catch((error) => {
+          if (error.request) {
+            watchedState.form.error = 'network';
+          } else if (error.message === 'parsingError') {
+            watchedState.form.error = 'wrongData';
+          } else {
+            watchedState.form.valid = false;
+            watchedState.form.error = error.type;
+          }
+        })
+        .then(() => {
+          watchedState.form.btnDisabled = false;
+        });
+    };
+
+    const updateRSS = () => {
+      state.feeds.forEach((feed) => {
+        axios.get(composeRequestUrl(feed.feedLink))
+          .then((response) => {
+            const { posts } = parseXML(response.data);
+            const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
+            const processedNewPosts = newPosts.map((post) => ({ ...post, id: _.uniqueId() }));
+            watchedState.posts = processedNewPosts.concat(state.posts);
+          });
+      });
+      setTimeout(() => updateRSS(), updateInterval);
+    };
+
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       processEnteredUrl();
     });
-  }).then(() => {
+
     postsContainer.addEventListener('click', (event) => {
       const id = event.target.getAttribute('data-id');
       if (id) {
@@ -104,7 +104,7 @@ export default () => {
         clickedPost.viewed = 'true';
       }
     });
-  }).then(() => {
+
     setTimeout(updateRSS(), updateInterval);
   });
 };
