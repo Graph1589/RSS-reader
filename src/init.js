@@ -74,6 +74,19 @@ export default () => {
       });
   };
 
+  const updateRSS = () => {
+    state.feeds.forEach((feed) => {
+      axios.get(composeRequestUrl(feed.feedLink))
+        .then((response) => {
+          const { posts } = parseXML(response.data);
+          const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
+          const processedNewPosts = newPosts.map((post) => ({ ...post, id: _.uniqueId() }));
+          watchedState.posts = processedNewPosts.concat(state.posts);
+        });
+    });
+    setTimeout(() => updateRSS(), updateInterval);
+  };
+
   i18nextInstance.init({
     lng: 'ru',
     debug: false,
@@ -91,19 +104,7 @@ export default () => {
         clickedPost.viewed = 'true';
       }
     });
+  }).then(() => {
+    setTimeout(updateRSS(), updateInterval);
   });
-
-  const updateRSS = () => {
-    state.feeds.forEach((feed) => {
-      axios.get(composeRequestUrl(feed.feedLink))
-        .then((response) => {
-          const { posts } = parseXML(response.data);
-          const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
-          const processedNewPosts = newPosts.map((post) => ({ ...post, id: _.uniqueId() }));
-          watchedState.posts = processedNewPosts.concat(state.posts);
-        });
-    });
-    setTimeout(() => updateRSS(), updateInterval);
-  };
-  setTimeout(updateRSS(), updateInterval);
 };
