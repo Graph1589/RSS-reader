@@ -17,7 +17,7 @@ export default () => {
     },
     feeds: [],
     posts: [],
-    // viewedPostsId: new Set(),
+    viewedPostsId: new Set(),
   };
 
   const i18nextInstance = i18next.createInstance();
@@ -46,7 +46,7 @@ export default () => {
   }, url) => {
     const feedLink = url;
     watchedState.feeds.push({
-      feedTitle, feedDescription, feedLink, id: _.uniqueId(), viewed: 'false',
+      feedTitle, feedDescription, feedLink, id: _.uniqueId(),
     });
     const processedPosts = posts.map((post) => ({ ...post, id: _.uniqueId() }));
     watchedState.posts = processedPosts.concat(state.posts);
@@ -96,8 +96,9 @@ export default () => {
     postsContainer.addEventListener('click', (event) => {
       const id = event.target.getAttribute('data-id');
       if (id) {
-        const clickedPost = _.find(watchedState.posts, (post) => post.id === id);
-        clickedPost.viewed = 'true';
+        // const clickedPost = _.find(watchedState.posts, (post) => post.id === id);
+        // clickedPost.viewed = 'true';
+        watchedState.viewedPostsId.add(id);
       }
     });
   });

@@ -129,7 +129,7 @@ const renderOutput = (state, i18nextInstance) => {
     currentPostHref.setAttribute('data-id', `${currentPost.id}`);
     currentPostHref.classList.add('fw-normal', 'link-secondery');
     currentPostHref.textContent = currentPost.postTitle;
-    if (!currentPost.viewed) {
+    if (!state.viewedPostsId.has(currentPost.id)) {
       currentPostHref.classList.add('fw-bold');
     }
     currentPostItem.appendChild(currentPostHref);
