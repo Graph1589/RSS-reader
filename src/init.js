@@ -69,13 +69,19 @@ export default () => {
         watchedState.form.message = 'added';
       })
       .catch((error) => {
-        if (error.request) {
-          watchedState.form.error = 'network';
-        } else if (error.message === 'parsingError') {
-          watchedState.form.error = 'wrongData';
-        } else {
-          watchedState.form.valid = false;
-          watchedState.form.error = error.type;
+        switch (true) {
+          case error.isAxiosError:
+            watchedState.form.error = 'network';
+            break;
+          case error.isParsingError:
+            watchedState.form.error = 'wrongData';
+            break;
+          case error.isValidationError:
+            watchedState.form.valid = false;
+            watchedState.form.error = error.type;
+            break;
+          default:
+            throw new Error(`unexpected error - ${error}`);
         }
       })
       .then(() => {

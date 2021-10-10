@@ -4,4 +4,8 @@ export default (url, list) => yup.string()
   .url()
   .notOneOf(list)
   .required()
-  .validate(url);
+  .validate(url)
+  .catch((e) => {
+    e.isValidationError = true;
+    throw e;
+  });

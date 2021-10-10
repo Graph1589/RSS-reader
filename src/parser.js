@@ -3,7 +3,9 @@ export default (feedString) => {
   const xmlDocument = parser.parseFromString(feedString.contents, 'text/xml');
   const errorNode = xmlDocument.querySelector('parsererror');
   if (errorNode) {
-    throw new Error('parsingError');
+    const error = new Error('String is not a valid XML document');
+    error.isParsingError = true;
+    throw error;
   }
   const feedTitle = xmlDocument.querySelector('title').textContent;
   const feedDescription = xmlDocument.querySelector('description').textContent;
