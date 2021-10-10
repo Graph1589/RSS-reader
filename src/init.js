@@ -17,6 +17,7 @@ export default () => {
     },
     feeds: [],
     posts: [],
+    // viewedPostsId: new Set(),
   };
 
   const i18nextInstance = i18next.createInstance();
@@ -28,9 +29,17 @@ export default () => {
 
   const getFeedsList = () => state.feeds.map((feed) => feed.feedLink);
 
-  const proxy = new URL('https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=');
+  const proxify = (url) => {
+    const proxy = 'https://hexlet-allorigins.herokuapp.com';
+    const proxifiedUrl = new URL('/get?', proxy);
+    proxifiedUrl.searchParams.append('disableCache', 'true');
+    proxifiedUrl.searchParams.append('url', `${url}`);
+    return proxifiedUrl;
+  };
 
-  const composeRequestUrl = (enteredUrl) => new URL(`${proxy.href}${enteredUrl}`);
+  // const proxy = new URL('https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=');
+
+  // const composeRequestUrl = (enteredUrl) => new URL(`${proxy.href}${enteredUrl}`);
 
   const addRSS = ({
     feedTitle, feedDescription, posts,
@@ -51,7 +60,7 @@ export default () => {
     const url = urlField.value;
     const list = getFeedsList();
     validate(url, list)
-      .then(() => axios.get(composeRequestUrl(url)))
+      .then(() => axios.get(proxify(url)))
       .then((response) => parseXML(response.data))
       .then((parsedRSS) => {
         addRSS(parsedRSS, url);
@@ -95,7 +104,7 @@ export default () => {
 
   const updateRSS = () => {
     state.feeds.forEach((feed) => {
-      axios.get(composeRequestUrl(feed.feedLink))
+      axios.get(proxify(feed.feedLink))
         .then((response) => {
           const { posts } = parseXML(response.data);
           const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
