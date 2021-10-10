@@ -100,10 +100,8 @@ export default () => {
     });
   }).then(() => {
     postsContainer.addEventListener('click', (event) => {
-      const id = event.target.getAttribute('data-id');
+      const { id } = event.target.dataset;
       if (id) {
-        // const clickedPost = _.find(watchedState.posts, (post) => post.id === id);
-        // clickedPost.viewed = 'true';
         watchedState.viewedPostsId.add(id);
       }
     });
