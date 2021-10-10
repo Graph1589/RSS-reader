@@ -14,10 +14,10 @@ export default (string) => {
     const postLink = item.querySelector('link').textContent;
     const postDescription = item.querySelector('description').textContent;
     return {
-      postTitle, postLink, postDescription,
+      title: postTitle, link: postLink, description: postDescription,
     };
   });
   return {
-    feedTitle, feedDescription, posts,
+    title: feedTitle, description: feedDescription, items: posts,
   };
 };

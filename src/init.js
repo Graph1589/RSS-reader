@@ -27,7 +27,7 @@ export default () => {
   const form = document.getElementById('rss-form');
   const urlField = document.getElementById('url-input');
 
-  const getFeedsList = () => state.feeds.map((feed) => feed.feedLink);
+  const getFeedsList = () => state.feeds.map((feed) => feed.link);
 
   const proxify = (url) => {
     const proxy = 'https://hexlet-allorigins.herokuapp.com';
@@ -37,18 +37,14 @@ export default () => {
     return proxifiedUrl;
   };
 
-  // const proxy = new URL('https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=');
-
-  // const composeRequestUrl = (enteredUrl) => new URL(`${proxy.href}${enteredUrl}`);
-
   const addRSS = ({
-    feedTitle, feedDescription, posts,
+    title, description, items,
   }, url) => {
-    const feedLink = url;
+    const link = url;
     watchedState.feeds.push({
-      feedTitle, feedDescription, feedLink, id: _.uniqueId(),
+      title, description, link, id: _.uniqueId(),
     });
-    const processedPosts = posts.map((post) => ({ ...post, id: _.uniqueId() }));
+    const processedPosts = items.map((post) => ({ ...post, id: _.uniqueId() }));
     watchedState.posts = processedPosts.concat(state.posts);
   };
 
@@ -108,10 +104,10 @@ export default () => {
   });
 
   const updateRSS = () => {
-    const feedsUpdatePromises = state.feeds.map((feed) => axios.get(proxify(feed.feedLink))
+    const feedsUpdatePromises = state.feeds.map((feed) => axios.get(proxify(feed.link))
       .then((response) => {
-        const { posts } = parseXML(response.data.contents);
-        const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
+        const { items } = parseXML(response.data.contents);
+        const newPosts = _.differenceBy(items, watchedState.posts, 'title');
         const processedNewPosts = newPosts.map((post) => ({ ...post, id: _.uniqueId() }));
         watchedState.posts = processedNewPosts.concat(state.posts);
       }));

@@ -76,18 +76,18 @@ const renderOutput = (state, i18nextInstance) => {
   feedsOutward.appendChild(listOfFeeds);
 
   state.feeds.forEach((currentFeed) => {
-    const { feedTitle, feedDescription } = currentFeed;
+    const { title, description } = currentFeed;
     const currentFeedItem = document.createElement('li');
     currentFeedItem.classList.add('list-group-item', 'border-0', 'border-end-0');
 
     const currentFeedHeader = document.createElement('h6');
     currentFeedHeader.classList.add('m-0');
-    currentFeedHeader.textContent = feedTitle;
+    currentFeedHeader.textContent = title;
     currentFeedItem.appendChild(currentFeedHeader);
 
     const currentFeedDescription = document.createElement('p');
     currentFeedDescription.classList.add('m-0', 'text-black-50', 'small');
-    currentFeedDescription.textContent = feedDescription;
+    currentFeedDescription.textContent = description;
     currentFeedItem.appendChild(currentFeedDescription);
 
     listOfFeeds.appendChild(currentFeedItem);
@@ -111,6 +111,9 @@ const renderOutput = (state, i18nextInstance) => {
   postsOutward.appendChild(listOfPosts);
 
   state.posts.forEach((currentPost) => {
+    const {
+      title, link, description, id,
+    } = currentPost;
     const currentPostItem = document.createElement('li');
     currentPostItem.classList.add(
       'list-group-item',
@@ -122,14 +125,14 @@ const renderOutput = (state, i18nextInstance) => {
     );
 
     const currentPostHref = document.createElement('a');
-    currentPostHref.setAttribute('href', currentPost.postLink);
+    currentPostHref.setAttribute('href', link);
     currentPostHref.setAttribute('target', '_blank');
     currentPostHref.setAttribute('rel', 'noopener norefferer');
     currentPostHref.setAttribute('style', 'text-decoration: none');
-    currentPostHref.setAttribute('data-id', `${currentPost.id}`);
+    currentPostHref.setAttribute('data-id', `${id}`);
     currentPostHref.classList.add('fw-normal', 'link-secondery');
-    currentPostHref.textContent = currentPost.postTitle;
-    if (!state.viewedPostsId.has(currentPost.id)) {
+    currentPostHref.textContent = title;
+    if (!state.viewedPostsId.has(id)) {
       currentPostHref.classList.add('fw-bold');
     }
     currentPostItem.appendChild(currentPostHref);
@@ -142,13 +145,13 @@ const renderOutput = (state, i18nextInstance) => {
     previewButton.classList.add('btn-outline-primary', 'btn', 'btn-sm');
     previewButton.setAttribute('data-toggle', 'modal');
     previewButton.setAttribute('data-target', '#modal');
-    previewButton.setAttribute('data-id', `${currentPost.id}`);
+    previewButton.setAttribute('data-id', `${id}`);
 
     previewButton.addEventListener('click', () => {
-      modalTitle.textContent = currentPost.postTitle;
-      modalContent.innerHTML = currentPost.postDescription;
+      modalTitle.textContent = title;
+      modalContent.innerHTML = description;
       currentPostHref.classList.replace('fw-bold', 'fw-normal');
-      modalRedirectButton.href = currentPost.postLink;
+      modalRedirectButton.href = link;
 
       modal.show();
     });
