@@ -61,7 +61,7 @@ export default () => {
     const list = getFeedsList();
     validate(url, list)
       .then(() => axios.get(proxify(url)))
-      .then((response) => parseXML(response.data))
+      .then((response) => parseXML(response.data.contents))
       .then((parsedRSS) => {
         addRSS(parsedRSS, url);
       })
@@ -113,7 +113,7 @@ export default () => {
     state.feeds.forEach((feed) => {
       axios.get(proxify(feed.feedLink))
         .then((response) => {
-          const { posts } = parseXML(response.data);
+          const { posts } = parseXML(response.data.contents);
           const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
           const processedNewPosts = newPosts.map((post) => ({ ...post, id: _.uniqueId() }));
           watchedState.posts = processedNewPosts.concat(state.posts);

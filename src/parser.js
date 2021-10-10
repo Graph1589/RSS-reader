@@ -1,6 +1,6 @@
-export default (feedString) => {
+export default (string) => {
   const parser = new DOMParser();
-  const xmlDocument = parser.parseFromString(feedString.contents, 'text/xml');
+  const xmlDocument = parser.parseFromString(string, 'text/xml');
   const errorNode = xmlDocument.querySelector('parsererror');
   if (errorNode) {
     const error = new Error('String is not a valid XML document');
