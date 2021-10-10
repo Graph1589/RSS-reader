@@ -108,16 +108,18 @@ export default () => {
   });
 
   const updateRSS = () => {
-    state.feeds.forEach((feed) => {
-      axios.get(proxify(feed.feedLink))
-        .then((response) => {
-          const { posts } = parseXML(response.data.contents);
-          const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
-          const processedNewPosts = newPosts.map((post) => ({ ...post, id: _.uniqueId() }));
-          watchedState.posts = processedNewPosts.concat(state.posts);
-        });
-    });
-    setTimeout(() => updateRSS(), updateInterval);
+    const feedsUpdatePromises = state.feeds.map((feed) => axios.get(proxify(feed.feedLink))
+      .then((response) => {
+        const { posts } = parseXML(response.data.contents);
+        const newPosts = _.differenceBy(posts, watchedState.posts, 'postTitle');
+        const processedNewPosts = newPosts.map((post) => ({ ...post, id: _.uniqueId() }));
+        watchedState.posts = processedNewPosts.concat(state.posts);
+      }));
+    Promise.all(feedsUpdatePromises)
+      .then(() => {
+        setTimeout(() => updateRSS(), updateInterval);
+      });
   };
+
   setTimeout(updateRSS(), updateInterval);
 };
