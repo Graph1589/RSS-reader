@@ -85,7 +85,21 @@ export default () => {
       });
   };
 
-  i18nextInstance.init({
+  const updateRSS = () => {
+    const feedsUpdatePromises = state.feeds.map((feed) => axios.get(proxify(feed.link))
+      .then((response) => {
+        const { items } = parseXML(response.data.contents);
+        const newPosts = _.differenceBy(items, watchedState.posts, 'title');
+        const processedNewPosts = newPosts.map((post) => ({ ...post, id: _.uniqueId() }));
+        watchedState.posts = processedNewPosts.concat(state.posts);
+      }));
+    Promise.all(feedsUpdatePromises)
+      .then(() => {
+        setTimeout(() => updateRSS(), updateInterval);
+      });
+  };
+
+  return i18nextInstance.init({
     lng: 'ru',
     debug: false,
     resources,
@@ -101,21 +115,7 @@ export default () => {
         watchedState.viewedPostsId.add(id);
       }
     });
+  }).then(() => {
+    setTimeout(updateRSS(), updateInterval);
   });
-
-  const updateRSS = () => {
-    const feedsUpdatePromises = state.feeds.map((feed) => axios.get(proxify(feed.link))
-      .then((response) => {
-        const { items } = parseXML(response.data.contents);
-        const newPosts = _.differenceBy(items, watchedState.posts, 'title');
-        const processedNewPosts = newPosts.map((post) => ({ ...post, id: _.uniqueId() }));
-        watchedState.posts = processedNewPosts.concat(state.posts);
-      }));
-    Promise.all(feedsUpdatePromises)
-      .then(() => {
-        setTimeout(() => updateRSS(), updateInterval);
-      });
-  };
-
-  setTimeout(updateRSS(), updateInterval);
 };
