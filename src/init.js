@@ -93,31 +93,31 @@ export default () => {
       });
   };
 
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    try {
+      const url = urlField.value;
+      const list = getFeedsList();
+      validate(url, list);
+      processEnteredUrl(url);
+    } catch (e) {
+      watchedState.form.valid = false;
+      watchedState.form.error = e.type;
+    }
+  });
+
+  postsContainer.addEventListener('click', (event) => {
+    const { id } = event.target.dataset;
+    if (id) {
+      watchedState.viewedPostsId.add(id);
+    }
+  });
+
+  setTimeout(updateRSS(), updateInterval);
+
   return i18nextInstance.init({
     lng: 'ru',
     debug: false,
     resources,
-  }).then(() => {
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      try {
-        const url = urlField.value;
-        const list = getFeedsList();
-        validate(url, list);
-        processEnteredUrl(url);
-      } catch (e) {
-        watchedState.form.valid = false;
-        watchedState.form.error = e.type;
-      }
-    });
-  }).then(() => {
-    postsContainer.addEventListener('click', (event) => {
-      const { id } = event.target.dataset;
-      if (id) {
-        watchedState.viewedPostsId.add(id);
-      }
-    });
-  }).then(() => {
-    setTimeout(updateRSS(), updateInterval);
   });
 };
