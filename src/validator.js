@@ -5,7 +5,10 @@ export default (url, list) => yup.string()
   .notOneOf(list)
   .required()
   .validateSync(url);
-/* .catch((e) => {
+/*
+  } catch (e) {
     e.isValidationError = true;
     throw e;
-  }); */
+  }
+};
+*/
