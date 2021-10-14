@@ -48,13 +48,15 @@ export default () => {
     watchedState.posts = processedPosts.concat(state.posts);
   };
 
-  const processEnteredUrl = (url) => {
+  const processEnteredUrl = () => {
     watchedState.form.message = undefined;
     watchedState.form.valid = true;
     watchedState.form.error = undefined;
     watchedState.form.btnDisabled = true;
-
-    axios.get(proxify(url))
+    const url = urlField.value;
+    const list = getFeedsList();
+    validate(url, list)
+      .then(() => axios.get(proxify(url)))
       .then((response) => parseXML(response.data.contents))
       .then((parsedRSS) => {
         addRSS(parsedRSS, url);
@@ -69,6 +71,10 @@ export default () => {
             break;
           case error.isParsingError:
             watchedState.form.error = 'wrongData';
+            break;
+          case error.isValidationError:
+            watchedState.form.valid = false;
+            watchedState.form.error = error.type;
             break;
           default:
             throw new Error(`unexpected error - ${error}`);
@@ -93,31 +99,23 @@ export default () => {
       });
   };
 
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    try {
-      const url = urlField.value;
-      const list = getFeedsList();
-      validate(url, list);
-      processEnteredUrl(url);
-    } catch (e) {
-      watchedState.form.valid = false;
-      watchedState.form.error = e.type;
-    }
-  });
-
-  postsContainer.addEventListener('click', (event) => {
-    const { id } = event.target.dataset;
-    if (id) {
-      watchedState.viewedPostsId.add(id);
-    }
-  });
-
-  setTimeout(updateRSS(), updateInterval);
-
   return i18nextInstance.init({
     lng: 'ru',
     debug: false,
     resources,
+  }).then(() => {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      processEnteredUrl();
+    });
+  }).then(() => {
+    postsContainer.addEventListener('click', (event) => {
+      const { id } = event.target.dataset;
+      if (id) {
+        watchedState.viewedPostsId.add(id);
+      }
+    });
+  }).then(() => {
+    setTimeout(updateRSS(), updateInterval);
   });
 };
