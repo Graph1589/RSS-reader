@@ -105,6 +105,7 @@ export default () => {
     resources,
   }).then(() => {
     form.addEventListener('submit', (event) => {
+      console.log(urlField.value);
       event.preventDefault();
       processEnteredUrl();
     });
