@@ -55,7 +55,7 @@ export default () => {
     watchedState.form.btnDisabled = true;
     const url = urlField.value;
     const list = getFeedsList();
-    return validate(url, list)
+    validate(url, list)
       .then(() => axios.get(proxify(url)))
       .then((response) => parseXML(response.data.contents))
       .then((parsedRSS) => {
