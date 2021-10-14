@@ -73,6 +73,7 @@ export default () => {
             watchedState.form.error = 'wrongData';
             break;
           case error.isValidationError:
+            console.log(error.type);
             watchedState.form.valid = false;
             watchedState.form.error = error.type;
             break;
