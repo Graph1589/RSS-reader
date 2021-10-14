@@ -73,7 +73,6 @@ export default () => {
             watchedState.form.error = 'wrongData';
             break;
           case error.isValidationError:
-            console.log(error.type);
             watchedState.form.valid = false;
             watchedState.form.error = error.type;
             break;
@@ -106,7 +105,6 @@ export default () => {
     resources,
   }).then(() => {
     form.addEventListener('submit', (event) => {
-      console.log(urlField.value);
       event.preventDefault();
       processEnteredUrl();
     });

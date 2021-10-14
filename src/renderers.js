@@ -1,9 +1,5 @@
 import { Modal } from 'bootstrap';
 
-// const urlInput = document.getElementById('url-input');
-// const feedback = document.querySelector('.feedback');
-// const submitButton = document.querySelector('[type="submit"]');
-
 const renderButton = (value) => {
   const urlInput = document.getElementById('url-input');
   const submitButton = document.querySelector('[type="submit"]');
