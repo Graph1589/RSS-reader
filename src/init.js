@@ -2,7 +2,6 @@ import { Modal } from 'bootstrap';
 import i18next from 'i18next';
 import axios from 'axios';
 import _ from 'lodash';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import resources from './locales/index.js';
 import validate from './validator.js';
 import parseXML from './parser.js';
@@ -31,7 +30,6 @@ export default () => {
 
   const modal = new Modal(document.getElementById('modal'));
   const showModal = (modalWindow) => () => modalWindow.show();
-  // const hideModal = (modalWindow) => () => modalWindow.hide();
   const modalTitle = document.querySelector('.modal-title');
   const modalContent = document.querySelector('.modal-body');
   const modalRedirectButton = document.querySelector('.full-article');
@@ -43,8 +41,6 @@ export default () => {
     feedsContainer,
     postsContainer,
     showModal: showModal(modal),
-    // hideModal: hideModal(modal),
-    // modal,
     modalTitle,
     modalContent,
     modalRedirectButton,
@@ -52,7 +48,6 @@ export default () => {
   // -------
   const watchedState = view(state, i18nextInstance, elementsForRenderers);
   const updateInterval = 5000;
-  // const postsContainer = document.querySelector('.posts');
   const form = document.getElementById('rss-form');
   const urlField = document.getElementById('url-input');
 

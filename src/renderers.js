@@ -1,20 +1,4 @@
 /* eslint-disable no-param-reassign */
-// const urlInput = document.getElementById('url-input');
-
-// const feedback = document.querySelector('.feedback');
-
-// const feedsContainer = document.querySelector('.feeds');
-// const postsContainer = document.querySelector('.posts');
-
-// const modal = new Modal(document.getElementById('modal'));
-// const modalTitle = document.querySelector('.modal-title');
-// const modalContent = document.querySelector('.modal-body');
-// const modalRedirectButton = document.querySelector('.full-article');
-
-const modalCloseButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
-modalCloseButtons.forEach((closeButton) => closeButton.addEventListener('click', () => {
-  // modal.hide();
-}));
 
 const renderButton = (value, submitButton, urlInput) => {
   submitButton.disabled = value;
@@ -150,7 +134,6 @@ const renderOutput = (
     listOfPosts.appendChild(currentPostItem);
   });
   listOfPosts.addEventListener('click', (e) => {
-    console.log(e.target);
     const { id, toggle } = e.target.dataset;
     if (toggle === 'modal') {
       const [clickedPost] = state.posts.filter((post) => post.id === id);
