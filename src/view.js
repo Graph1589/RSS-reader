@@ -27,6 +27,9 @@ export default (state, i18nextInstance) => onChange(state, (path, value) => {
     case 'posts':
       renderOutput(state, i18nextInstance);
       break;
+    case 'viewedPostsId':
+      renderOutput(state, i18nextInstance);
+      break;
     default:
       break;
   }

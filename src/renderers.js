@@ -1,14 +1,28 @@
 import { Modal } from 'bootstrap';
 
+const urlInput = document.getElementById('url-input');
+const submitButton = document.querySelector('[type="submit"]');
+const feedback = document.querySelector('.feedback');
+
+const feedsContainer = document.querySelector('.feeds');
+const postsContainer = document.querySelector('.posts');
+
+const modal = new Modal(document.getElementById('modal'));
+const modalTitle = document.querySelector('.modal-title');
+const modalContent = document.querySelector('.modal-body');
+const modalRedirectButton = document.querySelector('.full-article');
+
+const modalCloseButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
+modalCloseButtons.forEach((closeButton) => closeButton.addEventListener('click', () => {
+  modal.hide();
+}));
+
 const renderButton = (value) => {
-  const urlInput = document.getElementById('url-input');
-  const submitButton = document.querySelector('[type="submit"]');
   submitButton.disabled = value;
   urlInput.readOnly = value;
 };
 
 const renderInputValid = (valid) => {
-  const urlInput = document.getElementById('url-input');
   if (valid) {
     urlInput.classList.remove('is-invalid');
   } else {
@@ -17,7 +31,6 @@ const renderInputValid = (valid) => {
 };
 
 const renderError = (errorType, i18nextInstance) => {
-  const feedback = document.querySelector('.feedback');
   if (errorType) {
     feedback.classList.replace('text-success', 'text-danger');
     feedback.textContent = i18nextInstance.t(`errors.${errorType}`);
@@ -27,8 +40,6 @@ const renderError = (errorType, i18nextInstance) => {
 };
 
 const renderSuccess = (message, i18nextInstance) => {
-  const urlInput = document.getElementById('url-input');
-  const feedback = document.querySelector('.feedback');
   if (message) {
     feedback.classList.replace('text-danger', 'text-success');
     feedback.textContent = i18nextInstance.t(`messages.${message}`);
@@ -38,19 +49,6 @@ const renderSuccess = (message, i18nextInstance) => {
 };
 
 const renderOutput = (state, i18nextInstance) => {
-  const feedsContainer = document.querySelector('.feeds');
-  const postsContainer = document.querySelector('.posts');
-
-  const modal = new Modal(document.getElementById('modal'));
-  const modalTitle = document.querySelector('.modal-title');
-  const modalContent = document.querySelector('.modal-body');
-  const modalRedirectButton = document.querySelector('.full-article');
-
-  const modalCloseButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
-  modalCloseButtons.forEach((closeButton) => closeButton.addEventListener('click', () => {
-    modal.hide();
-  }));
-
   feedsContainer.innerHTML = '';
   postsContainer.innerHTML = '';
 
@@ -108,7 +106,7 @@ const renderOutput = (state, i18nextInstance) => {
 
   state.posts.forEach((currentPost) => {
     const {
-      title, link, description, id,
+      title, link, id,
     } = currentPost;
     const currentPostItem = document.createElement('li');
     currentPostItem.classList.add(
@@ -125,35 +123,35 @@ const renderOutput = (state, i18nextInstance) => {
     currentPostHref.setAttribute('target', '_blank');
     currentPostHref.setAttribute('rel', 'noopener norefferer');
     currentPostHref.setAttribute('style', 'text-decoration: none');
-    currentPostHref.setAttribute('data-id', `${id}`);
+    currentPostHref.dataset.id = id;
     currentPostHref.classList.add('fw-normal', 'link-secondery');
     currentPostHref.textContent = title;
     if (!state.viewedPostsId.has(id)) {
       currentPostHref.classList.add('fw-bold');
     }
     currentPostItem.appendChild(currentPostHref);
-    currentPostHref.addEventListener('click', () => {
-      currentPostHref.classList.replace('fw-bold', 'fw-normal');
-    });
 
     const previewButton = document.createElement('button');
     previewButton.textContent = i18nextInstance.t('output.preview');
     previewButton.classList.add('btn-outline-primary', 'btn', 'btn-sm');
     previewButton.setAttribute('data-toggle', 'modal');
     previewButton.setAttribute('data-target', '#modal');
-    previewButton.setAttribute('data-id', `${id}`);
+    previewButton.dataset.id = id;
 
-    previewButton.addEventListener('click', () => {
+    currentPostItem.appendChild(previewButton);
+    listOfPosts.appendChild(currentPostItem);
+  });
+  listOfPosts.addEventListener('click', (e) => {
+    console.log(e.target);
+    const { id, toggle } = e.target.dataset;
+    if (toggle === 'modal') {
+      const [clickedPost] = state.posts.filter((post) => post.id === id);
+      const { title, description, link } = clickedPost;
       modalTitle.textContent = title;
       modalContent.innerHTML = description;
-      currentPostHref.classList.replace('fw-bold', 'fw-normal');
       modalRedirectButton.href = link;
-
       modal.show();
-    });
-    currentPostItem.appendChild(previewButton);
-
-    listOfPosts.appendChild(currentPostItem);
+    }
   });
 };
 
