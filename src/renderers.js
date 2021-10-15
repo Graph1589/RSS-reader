@@ -1,4 +1,4 @@
-import { Modal } from 'bootstrap';
+// import { Modal } from 'bootstrap';
 
 const urlInput = document.getElementById('url-input');
 const submitButton = document.querySelector('[type="submit"]');
@@ -7,14 +7,14 @@ const feedback = document.querySelector('.feedback');
 const feedsContainer = document.querySelector('.feeds');
 const postsContainer = document.querySelector('.posts');
 
-const modal = new Modal(document.getElementById('modal'));
+// const modal = new Modal(document.getElementById('modal'));
 const modalTitle = document.querySelector('.modal-title');
 const modalContent = document.querySelector('.modal-body');
 const modalRedirectButton = document.querySelector('.full-article');
 
 const modalCloseButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
 modalCloseButtons.forEach((closeButton) => closeButton.addEventListener('click', () => {
-  modal.hide();
+  // modal.hide();
 }));
 
 const renderButton = (value) => {
@@ -150,7 +150,7 @@ const renderOutput = (state, i18nextInstance) => {
       modalTitle.textContent = title;
       modalContent.innerHTML = description;
       modalRedirectButton.href = link;
-      modal.show();
+      // modal.show();
     }
   });
 };
