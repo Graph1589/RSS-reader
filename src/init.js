@@ -1,3 +1,4 @@
+import { Modal } from 'bootstrap';
 import i18next from 'i18next';
 import axios from 'axios';
 import _ from 'lodash';
@@ -21,9 +22,37 @@ export default () => {
   };
 
   const i18nextInstance = i18next.createInstance();
-  const watchedState = view(state, i18nextInstance);
-  const updateInterval = 5000;
+  // ----------
+  const submitButton = document.querySelector('[type="submit"]');
+  const urlInput = document.getElementById('url-input');
+  const feedback = document.querySelector('.feedback');
+  const feedsContainer = document.querySelector('.feeds');
   const postsContainer = document.querySelector('.posts');
+
+  const modal = new Modal(document.getElementById('modal'));
+  const showModal = (modalWindow) => () => modalWindow.show();
+  // const hideModal = (modalWindow) => () => modalWindow.hide();
+  const modalTitle = document.querySelector('.modal-title');
+  const modalContent = document.querySelector('.modal-body');
+  const modalRedirectButton = document.querySelector('.full-article');
+
+  const elementsForRenderers = {
+    submitButton,
+    urlInput,
+    feedback,
+    feedsContainer,
+    postsContainer,
+    showModal: showModal(modal),
+    // hideModal: hideModal(modal),
+    // modal,
+    modalTitle,
+    modalContent,
+    modalRedirectButton,
+  };
+  // -------
+  const watchedState = view(state, i18nextInstance, elementsForRenderers);
+  const updateInterval = 5000;
+  // const postsContainer = document.querySelector('.posts');
   const form = document.getElementById('rss-form');
   const urlField = document.getElementById('url-input');
 

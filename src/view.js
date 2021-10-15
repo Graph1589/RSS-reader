@@ -7,29 +7,68 @@ import {
   renderButton,
 } from './renderers.js';
 
-export default (state, i18nextInstance) => onChange(state, (path, value) => {
-  const submitButton = document.querySelector('[type="submit"]');
+export default (state, i18nextInstance, elementsForRenderers) => onChange(state, (path, value) => {
+  const {
+    submitButton,
+    urlInput,
+    feedback,
+    feedsContainer,
+    postsContainer,
+    showModal,
+    // hideModal,
+    // modal,
+    modalTitle,
+    modalContent,
+    modalRedirectButton,
+  } = elementsForRenderers;
   switch (path) {
     case 'form.valid':
-      renderInputValid(value);
+      renderInputValid(value, urlInput);
       break;
     case 'form.error':
-      renderError(value, i18nextInstance);
+      renderError(value, i18nextInstance, feedback);
       break;
     case 'form.btnDisabled':
-      renderButton(value, submitButton);
+      renderButton(value, submitButton, urlInput);
       break;
     case 'form.message':
-      renderSuccess(value, i18nextInstance);
+      renderSuccess(value, i18nextInstance, feedback, urlInput);
       break;
     case 'feeds':
-      renderOutput(state, i18nextInstance);
+      renderOutput(
+        state,
+        i18nextInstance,
+        feedsContainer,
+        postsContainer,
+        modalTitle,
+        modalContent,
+        modalRedirectButton,
+        showModal,
+      );
       break;
     case 'posts':
-      renderOutput(state, i18nextInstance);
+      renderOutput(
+        state,
+        i18nextInstance,
+        feedsContainer,
+        postsContainer,
+        modalTitle,
+        modalContent,
+        modalRedirectButton,
+        showModal,
+      );
       break;
     case 'viewedPostsId':
-      renderOutput(state, i18nextInstance);
+      renderOutput(
+        state,
+        i18nextInstance,
+        feedsContainer,
+        postsContainer,
+        modalTitle,
+        modalContent,
+        modalRedirectButton,
+        showModal,
+      );
       break;
     default:
       break;
