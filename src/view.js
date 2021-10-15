@@ -8,6 +8,7 @@ import {
 } from './renderers.js';
 
 export default (state, i18nextInstance) => onChange(state, (path, value) => {
+  const submitButton = document.querySelector('[type="submit"]');
   switch (path) {
     case 'form.valid':
       renderInputValid(value);
@@ -16,7 +17,7 @@ export default (state, i18nextInstance) => onChange(state, (path, value) => {
       renderError(value, i18nextInstance);
       break;
     case 'form.btnDisabled':
-      renderButton(value);
+      renderButton(value, submitButton);
       break;
     case 'form.message':
       renderSuccess(value, i18nextInstance);

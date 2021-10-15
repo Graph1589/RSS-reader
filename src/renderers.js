@@ -1,7 +1,7 @@
 // import { Modal } from 'bootstrap';
 
 const urlInput = document.getElementById('url-input');
-const submitButton = document.querySelector('[type="submit"]');
+
 const feedback = document.querySelector('.feedback');
 
 const feedsContainer = document.querySelector('.feeds');
@@ -17,8 +17,8 @@ modalCloseButtons.forEach((closeButton) => closeButton.addEventListener('click',
   // modal.hide();
 }));
 
-const renderButton = (value) => {
-  submitButton.disabled = value;
+const renderButton = (value, submitButton) => {
+  submitButton.setAttribute('disabled', value);
   urlInput.readOnly = value;
 };
 
