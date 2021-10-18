@@ -36,10 +36,6 @@ const renderOutput = (
   {
     feedsContainer,
     postsContainer,
-    modalTitle,
-    modalContent,
-    modalRedirectButton,
-    modal,
   },
 ) => {
   feedsContainer.innerHTML = '';
@@ -134,6 +130,7 @@ const renderOutput = (
     currentPostItem.appendChild(previewButton);
     listOfPosts.appendChild(currentPostItem);
   });
+  /*
   listOfPosts.addEventListener('click', (e) => {
     const { id, toggle } = e.target.dataset;
     if (toggle === 'modal') {
@@ -145,6 +142,7 @@ const renderOutput = (
       modal.show();
     }
   });
+  */
 };
 
 export {

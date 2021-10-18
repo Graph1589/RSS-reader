@@ -136,9 +136,17 @@ export default () => {
     });
   }).then(() => {
     postsContainer.addEventListener('click', (event) => {
-      const { id } = event.target.dataset;
+      const { id, toggle } = event.target.dataset;
       if (id) {
         watchedState.viewedPostsId.add(id);
+      }
+      if (toggle === 'modal') {
+        const [clickedPost] = state.posts.filter((post) => post.id === id);
+        const { title, description, link } = clickedPost;
+        modalTitle.textContent = title;
+        modalContent.innerHTML = description;
+        modalRedirectButton.href = link;
+        modal.show();
       }
     });
   }).then(() => {
