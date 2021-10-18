@@ -14,7 +14,6 @@ export default () => {
       valid: true,
       error: null,
       message: null,
-      // btnDisabled: false,
     },
     feeds: [],
     posts: [],
@@ -40,10 +39,6 @@ export default () => {
     feedback,
     feedsContainer,
     postsContainer,
-    modal,
-    modalTitle,
-    modalContent,
-    modalRedirectButton,
   };
   // -------
   const watchedState = view(state, i18nextInstance, elementsForRenderers);
@@ -141,7 +136,7 @@ export default () => {
         watchedState.viewedPostsId.add(id);
       }
       if (toggle === 'modal') {
-        const [clickedPost] = state.posts.filter((post) => post.id === id);
+        const clickedPost = state.posts.find((post) => post.id === id);
         const { title, description, link } = clickedPost;
         modalTitle.textContent = title;
         modalContent.innerHTML = description;

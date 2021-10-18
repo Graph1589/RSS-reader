@@ -7,7 +7,7 @@ import {
   renderBlockForm,
 } from './renderers.js';
 
-const processStateHandler = {
+const formStateHandler = {
   filling: ({ elementsForRenderers }) => (
     renderBlockForm(false, elementsForRenderers)
   ),
@@ -31,7 +31,7 @@ export default (state, i18nextInstance, elementsForRenderers) => onChange(state,
         message: state.form.message,
         error: state.form.error,
       };
-      processStateHandler[value](params);
+      formStateHandler[value](params);
     }
       break;
     case 'form.valid':

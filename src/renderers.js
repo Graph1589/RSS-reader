@@ -1,5 +1,5 @@
-// /* eslint-disable no-param-reassign */
-const renderBlockForm = (value, { submitButton, urlInput }) => {
+const renderBlockForm = (value, elementsForRenderers) => {
+  const { submitButton, urlInput } = elementsForRenderers;
   submitButton.disabled = value;
   urlInput.readOnly = value;
 };
@@ -12,7 +12,8 @@ const renderInputValid = (valid, { urlInput }) => {
   }
 };
 
-const renderError = (errorType, i18nextInstance, { feedback }) => {
+const renderError = (errorType, i18nextInstance, elementsForRenderers) => {
+  const { feedback } = elementsForRenderers;
   if (errorType) {
     feedback.classList.replace('text-success', 'text-danger');
     feedback.textContent = i18nextInstance.t(`errors.${errorType}`);
@@ -21,7 +22,8 @@ const renderError = (errorType, i18nextInstance, { feedback }) => {
   }
 };
 
-const renderMessage = (message, i18nextInstance, { feedback, urlInput }) => {
+const renderMessage = (message, i18nextInstance, elementsForRenderers) => {
+  const { feedback, urlInput } = elementsForRenderers;
   if (message) {
     feedback.classList.replace('text-danger', 'text-success');
     feedback.textContent = i18nextInstance.t(`messages.${message}`);
@@ -30,14 +32,8 @@ const renderMessage = (message, i18nextInstance, { feedback, urlInput }) => {
   }
 };
 
-const renderOutput = (
-  state,
-  i18nextInstance,
-  {
-    feedsContainer,
-    postsContainer,
-  },
-) => {
+const renderOutput = (state, i18nextInstance, elementsForRenderers) => {
+  const { feedsContainer, postsContainer } = elementsForRenderers;
   feedsContainer.innerHTML = '';
   postsContainer.innerHTML = '';
 
@@ -123,26 +119,13 @@ const renderOutput = (
     const previewButton = document.createElement('button');
     previewButton.textContent = i18nextInstance.t('output.preview');
     previewButton.classList.add('btn-outline-primary', 'btn', 'btn-sm');
-    previewButton.setAttribute('data-toggle', 'modal');
-    previewButton.setAttribute('data-target', '#modal');
+    previewButton.dataset.toggle = 'modal';
+    previewButton.dataset.target = '#modal';
     previewButton.dataset.id = id;
 
     currentPostItem.appendChild(previewButton);
     listOfPosts.appendChild(currentPostItem);
   });
-  /*
-  listOfPosts.addEventListener('click', (e) => {
-    const { id, toggle } = e.target.dataset;
-    if (toggle === 'modal') {
-      const [clickedPost] = state.posts.filter((post) => post.id === id);
-      const { title, description, link } = clickedPost;
-      modalTitle.textContent = title;
-      modalContent.innerHTML = description;
-      modalRedirectButton.href = link;
-      modal.show();
-    }
-  });
-  */
 };
 
 export {
