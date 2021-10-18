@@ -1,11 +1,10 @@
-/* eslint-disable no-param-reassign */
-
-const renderButton = (value, submitButton, urlInput) => {
+// /* eslint-disable no-param-reassign */
+const renderButton = (value, { submitButton, urlInput }) => {
   submitButton.disabled = value;
   urlInput.readOnly = value;
 };
 
-const renderInputValid = (valid, urlInput) => {
+const renderInputValid = (valid, { urlInput }) => {
   if (valid) {
     urlInput.classList.remove('is-invalid');
   } else {
@@ -13,7 +12,7 @@ const renderInputValid = (valid, urlInput) => {
   }
 };
 
-const renderError = (errorType, i18nextInstance, feedback) => {
+const renderError = (errorType, i18nextInstance, { feedback }) => {
   if (errorType) {
     feedback.classList.replace('text-success', 'text-danger');
     feedback.textContent = i18nextInstance.t(`errors.${errorType}`);
@@ -22,7 +21,7 @@ const renderError = (errorType, i18nextInstance, feedback) => {
   }
 };
 
-const renderSuccess = (message, i18nextInstance, feedback, urlInput) => {
+const renderSuccess = (message, i18nextInstance, { feedback, urlInput }) => {
   if (message) {
     feedback.classList.replace('text-danger', 'text-success');
     feedback.textContent = i18nextInstance.t(`messages.${message}`);
@@ -34,12 +33,14 @@ const renderSuccess = (message, i18nextInstance, feedback, urlInput) => {
 const renderOutput = (
   state,
   i18nextInstance,
-  feedsContainer,
-  postsContainer,
-  modalTitle,
-  modalContent,
-  modalRedirectButton,
-  showModal,
+  {
+    feedsContainer,
+    postsContainer,
+    modalTitle,
+    modalContent,
+    modalRedirectButton,
+    modal,
+  },
 ) => {
   feedsContainer.innerHTML = '';
   postsContainer.innerHTML = '';
@@ -141,7 +142,7 @@ const renderOutput = (
       modalTitle.textContent = title;
       modalContent.innerHTML = description;
       modalRedirectButton.href = link;
-      showModal();
+      modal.show();
     }
   });
 };

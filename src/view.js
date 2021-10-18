@@ -8,64 +8,38 @@ import {
 } from './renderers.js';
 
 export default (state, i18nextInstance, elementsForRenderers) => onChange(state, (path, value) => {
-  const {
-    submitButton,
-    urlInput,
-    feedback,
-    feedsContainer,
-    postsContainer,
-    showModal,
-    modalTitle,
-    modalContent,
-    modalRedirectButton,
-  } = elementsForRenderers;
   switch (path) {
     case 'form.valid':
-      renderInputValid(value, urlInput);
+      renderInputValid(value, elementsForRenderers);
       break;
     case 'form.error':
-      renderError(value, i18nextInstance, feedback);
+      renderError(value, i18nextInstance, elementsForRenderers);
       break;
     case 'form.btnDisabled':
-      renderButton(value, submitButton, urlInput);
+      renderButton(value, elementsForRenderers);
       break;
     case 'form.message':
-      renderSuccess(value, i18nextInstance, feedback, urlInput);
+      renderSuccess(value, i18nextInstance, elementsForRenderers);
       break;
     case 'feeds':
       renderOutput(
         state,
         i18nextInstance,
-        feedsContainer,
-        postsContainer,
-        modalTitle,
-        modalContent,
-        modalRedirectButton,
-        showModal,
+        elementsForRenderers,
       );
       break;
     case 'posts':
       renderOutput(
         state,
         i18nextInstance,
-        feedsContainer,
-        postsContainer,
-        modalTitle,
-        modalContent,
-        modalRedirectButton,
-        showModal,
+        elementsForRenderers,
       );
       break;
     case 'viewedPostsId':
       renderOutput(
         state,
         i18nextInstance,
-        feedsContainer,
-        postsContainer,
-        modalTitle,
-        modalContent,
-        modalRedirectButton,
-        showModal,
+        elementsForRenderers,
       );
       break;
     default:

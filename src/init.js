@@ -11,8 +11,8 @@ export default () => {
   const state = {
     form: {
       valid: true,
-      error: undefined,
-      message: undefined,
+      error: null,
+      message: null,
       btnDisabled: false,
     },
     feeds: [],
@@ -29,7 +29,6 @@ export default () => {
   const postsContainer = document.querySelector('.posts');
 
   const modal = new Modal(document.getElementById('modal'));
-  const showModal = (modalWindow) => () => modalWindow.show();
   const modalTitle = document.querySelector('.modal-title');
   const modalContent = document.querySelector('.modal-body');
   const modalRedirectButton = document.querySelector('.full-article');
@@ -40,7 +39,7 @@ export default () => {
     feedback,
     feedsContainer,
     postsContainer,
-    showModal: showModal(modal),
+    modal,
     modalTitle,
     modalContent,
     modalRedirectButton,
@@ -73,9 +72,9 @@ export default () => {
   };
 
   const processEnteredUrl = () => {
-    watchedState.form.message = undefined;
+    watchedState.form.message = null;
     watchedState.form.valid = true;
-    watchedState.form.error = undefined;
+    watchedState.form.error = null;
     watchedState.form.btnDisabled = true;
     const url = urlField.value;
     const list = getFeedsList();
