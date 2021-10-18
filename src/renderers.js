@@ -1,5 +1,5 @@
 // /* eslint-disable no-param-reassign */
-const renderButton = (value, { submitButton, urlInput }) => {
+const renderBlockForm = (value, { submitButton, urlInput }) => {
   submitButton.disabled = value;
   urlInput.readOnly = value;
 };
@@ -21,7 +21,7 @@ const renderError = (errorType, i18nextInstance, { feedback }) => {
   }
 };
 
-const renderSuccess = (message, i18nextInstance, { feedback, urlInput }) => {
+const renderMessage = (message, i18nextInstance, { feedback, urlInput }) => {
   if (message) {
     feedback.classList.replace('text-danger', 'text-success');
     feedback.textContent = i18nextInstance.t(`messages.${message}`);
@@ -150,7 +150,7 @@ const renderOutput = (
 export {
   renderInputValid,
   renderError,
-  renderSuccess,
+  renderMessage,
   renderOutput,
-  renderButton,
+  renderBlockForm,
 };

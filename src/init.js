@@ -10,10 +10,11 @@ import view from './view.js';
 export default () => {
   const state = {
     form: {
+      state: 'filling',
       valid: true,
       error: null,
       message: null,
-      btnDisabled: false,
+      // btnDisabled: false,
     },
     feeds: [],
     posts: [],
@@ -75,7 +76,7 @@ export default () => {
     watchedState.form.message = null;
     watchedState.form.valid = true;
     watchedState.form.error = null;
-    watchedState.form.btnDisabled = true;
+    watchedState.form.state = 'processing';
     const url = urlField.value;
     const list = getFeedsList();
     validate(url, list)
@@ -86,6 +87,7 @@ export default () => {
       })
       .then(() => {
         watchedState.form.message = 'added';
+        watchedState.form.state = 'finished';
       })
       .catch((error) => {
         switch (true) {
@@ -102,9 +104,10 @@ export default () => {
           default:
             throw new Error(`unexpected error - ${error}`);
         }
+        watchedState.form.state = 'failed';
       })
-      .then(() => {
-        watchedState.form.btnDisabled = false;
+      .finally(() => {
+        watchedState.form.state = 'filling';
       });
   };
 
