@@ -21,13 +21,12 @@ export default () => {
   };
 
   const i18nextInstance = i18next.createInstance();
-  // ----------
+
   const submitButton = document.querySelector('[type="submit"]');
   const urlInput = document.getElementById('url-input');
   const feedback = document.querySelector('.feedback');
   const feedsContainer = document.querySelector('.feeds');
   const postsContainer = document.querySelector('.posts');
-
   const modal = new Modal(document.getElementById('modal'));
   const modalTitle = document.querySelector('.modal-title');
   const modalContent = document.querySelector('.modal-body');
@@ -40,11 +39,10 @@ export default () => {
     feedsContainer,
     postsContainer,
   };
-  // -------
+
   const watchedState = view(state, i18nextInstance, elementsForRenderers);
   const updateInterval = 5000;
   const form = document.getElementById('rss-form');
-  const urlField = document.getElementById('url-input');
 
   const getFeedsList = () => state.feeds.map((feed) => feed.link);
 
@@ -67,12 +65,11 @@ export default () => {
     watchedState.posts = processedPosts.concat(state.posts);
   };
 
-  const processEnteredUrl = () => {
+  const processEnteredUrl = (url) => {
     watchedState.form.message = null;
     watchedState.form.valid = true;
     watchedState.form.error = null;
     watchedState.form.state = 'processing';
-    const url = urlField.value;
     const list = getFeedsList();
     validate(url, list)
       .then(() => axios.get(proxify(url)))
@@ -127,7 +124,9 @@ export default () => {
   }).then(() => {
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-      processEnteredUrl();
+      const formData = new FormData(event.target);
+      const enteredUrl = formData.get('url');
+      processEnteredUrl(enteredUrl);
     });
   }).then(() => {
     postsContainer.addEventListener('click', (event) => {
