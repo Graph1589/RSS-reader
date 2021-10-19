@@ -17,6 +17,7 @@ const formStateHandler = {
   failed: (elementsForRenderers) => (
     renderBlockForm(false, elementsForRenderers)
   ),
+  filling: () => null,
 };
 
 export default (state, i18nextInstance, elementsForRenderers) => onChange(state, (path, value) => {
