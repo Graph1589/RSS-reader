@@ -73,11 +73,9 @@ export default () => {
     const list = getFeedsList();
     validate(url, list)
       .then(() => axios.get(proxify(url)))
-      .then((response) => parseXML(response.data.contents))
-      .then((parsedRSS) => {
+      .then((response) => {
+        const parsedRSS = parseXML(response.data.contents);
         addRSS(parsedRSS, url);
-      })
-      .then(() => {
         watchedState.form.message = 'added';
         watchedState.form.state = 'finished';
       })
@@ -128,7 +126,6 @@ export default () => {
       const enteredUrl = formData.get('url');
       processEnteredUrl(enteredUrl);
     });
-  }).then(() => {
     postsContainer.addEventListener('click', (event) => {
       const { id, toggle } = event.target.dataset;
       if (id) {
@@ -144,6 +141,6 @@ export default () => {
       }
     });
   }).then(() => {
-    setTimeout(updateRSS(), updateInterval);
+    setTimeout(updateRSS, updateInterval);
   });
 };

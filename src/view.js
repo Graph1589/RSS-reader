@@ -8,31 +8,27 @@ import {
 } from './renderers.js';
 
 const formStateHandler = {
-  filling: ({ elementsForRenderers }) => (
-    renderBlockForm(false, elementsForRenderers)
-  ),
-  processing: ({ elementsForRenderers }) => (
+  processing: (elementsForRenderers) => (
     renderBlockForm(true, elementsForRenderers)
   ),
-  finished: ({ message, i18nextInstance, elementsForRenderers }) => (
-    renderMessage(message, i18nextInstance, elementsForRenderers)
+  finished: (elementsForRenderers) => (
+    renderBlockForm(false, elementsForRenderers)
   ),
-  failed: ({ error, i18nextInstance, elementsForRenderers }) => (
-    renderError(error, i18nextInstance, elementsForRenderers)
+  failed: (elementsForRenderers) => (
+    renderBlockForm(false, elementsForRenderers)
   ),
 };
 
 export default (state, i18nextInstance, elementsForRenderers) => onChange(state, (path, value) => {
   switch (path) {
-    case 'form.state': {
-      const params = {
-        i18nextInstance,
-        elementsForRenderers,
-        message: state.form.message,
-        error: state.form.error,
-      };
-      formStateHandler[value](params);
-    }
+    case 'form.state':
+      formStateHandler[value](elementsForRenderers);
+      break;
+    case 'form.error':
+      renderError(value, i18nextInstance, elementsForRenderers);
+      break;
+    case 'form.message':
+      renderMessage(value, i18nextInstance, elementsForRenderers);
       break;
     case 'form.valid':
       renderInputValid(value, elementsForRenderers);
