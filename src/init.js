@@ -47,7 +47,7 @@ export default () => {
   const getFeedsList = () => state.feeds.map((feed) => feed.link);
 
   const proxify = (url) => {
-    const proxy = 'https://hexlet-allorigins.herokuapp.com';
+    const proxy = 'https://allorigins.hexlet.app';
     const proxifiedUrl = new URL('/get?', proxy);
     proxifiedUrl.searchParams.append('disableCache', 'true');
     proxifiedUrl.searchParams.append('url', `${url}`);
